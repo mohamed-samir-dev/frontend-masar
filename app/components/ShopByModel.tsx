@@ -242,9 +242,10 @@ export default function ShopByModel() {
             bulletActiveClass: "swiper-models-bullet-active",
           }}
           grabCursor
-          spaceBetween={20}
+          slidesPerView={1.2}
+          spaceBetween={12}
           breakpoints={{
-            0:    { slidesPerView: 1.2,  spaceBetween: 12 },
+            350:  { slidesPerView: 1,    spaceBetween: 12 },
             380:  { slidesPerView: 1.3,  spaceBetween: 12 },
             480:  { slidesPerView: 1.8,  spaceBetween: 14 },
             640:  { slidesPerView: 2.4,  spaceBetween: 18 },
