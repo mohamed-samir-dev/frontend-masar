@@ -1,7 +1,7 @@
 import { ProductGrid } from "./components/products";
 import CustomerReviews from "./components/CustomerReviews";
-import ShopByCategory from "./components/ShopByCategory";
 import HeroSection from "./components/HeroSection";
+import ShopByModel from "./components/ShopByModel";
 import { getCachedProducts } from "./lib/products-cache";
 
 export const dynamic = "force-dynamic";
@@ -114,9 +114,9 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
-      <main className="min-h-screen bg-white">
+      <main className="min-h-screen" style={{ background: "radial-gradient(ellipse at 70% 0%, #e8eeff 0%, #f4f6ff 35%, #f9fafb 70%, #ffffff 100%)" }}>
         <HeroSection />
-        <ShopByCategory />
+        <ShopByModel />
         <ProductGrid products={products} homeConfig={homeConfig} bannerMap={bannerMap} />
         <CustomerReviews />
       </main>
