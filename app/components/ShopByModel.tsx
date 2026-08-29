@@ -199,15 +199,12 @@ export default function ShopByModel() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#0B43FD]" />
               أحدث الموديلات
             </div>
-            <h2 className="text-[clamp(1.8rem,4.5vw,3rem)] font-black text-[#0a0a0a] leading-[1.1] tracking-tight">
+            <h2 className="text-[clamp(1.4rem,5vw,3rem)] font-black text-[#0a0a0a] leading-[1.1] tracking-tight">
               تسوّق حسب{" "}
               <span className="bg-gradient-to-l from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent">
                 الجهاز
               </span>
             </h2>
-            <p className="text-[0.9rem] text-[#6b7280] mt-2.5 max-w-[400px] leading-relaxed">
-              اختر جهازك، غيّر اللون، واطلب بكل سهولة
-            </p>
           </div>
 
           {/* Nav arrows — desktop only */}
@@ -245,12 +242,12 @@ export default function ShopByModel() {
           slidesPerView={1.2}
           spaceBetween={12}
           breakpoints={{
-            0:    { slidesPerView: 1.15, spaceBetween: 10 },
-            350:  { slidesPerView: 1.25, spaceBetween: 10 },
-            400:  { slidesPerView: 1.4,  spaceBetween: 12 },
-            480:  { slidesPerView: 1.8,  spaceBetween: 14 },
-            640:  { slidesPerView: 2.4,  spaceBetween: 18 },
-            900:  { slidesPerView: 3,    spaceBetween: 20 },
+            0:    { slidesPerView: 1.5,  spaceBetween: 10 },
+            350:  { slidesPerView: 1.65, spaceBetween: 10 },
+            400:  { slidesPerView: 1.85, spaceBetween: 12 },
+            480:  { slidesPerView: 2.2,  spaceBetween: 14 },
+            640:  { slidesPerView: 2.7,  spaceBetween: 18 },
+            900:  { slidesPerView: 3.2,  spaceBetween: 20 },
             1200: { slidesPerView: 4,    spaceBetween: 22 },
           }}
           className="!overflow-visible"
