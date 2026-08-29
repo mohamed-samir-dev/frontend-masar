@@ -50,7 +50,7 @@ export default function HeroSection() {
         {/* Slide 1 */}
         <section
           dir="rtl"
-          className="relative w-full shrink-0 min-h-[45vh] sm:min-h-[85vh] flex items-center py-6 sm:py-16"
+          className="relative w-full shrink-0 min-h-[45vh] sm:h-[85vh] flex items-center py-6 sm:py-16"
         >
           <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url(/hero3.webp)" }} />
           <div className="absolute inset-0 bg-gradient-to-l from-white/80 via-white/55 to-transparent" />
@@ -106,18 +106,45 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-l from-white/95 via-white/80 to-white/10" />
           <div className="relative z-10 max-w-[580px] pr-4 sm:pr-8 ml-auto mr-[2%] sm:mr-[4%] flex flex-col gap-0">
             <div className="font-black text-[#0a0a0a] tracking-tight mb-4 leading-[1.2]">
-              <div className="mb-2 text-[clamp(2rem,5vw,4rem)]">خلي اللي</div>
+              <div className="mb-2 text-[clamp(2rem,3.5vw,2.8rem)]">خلي اللي</div>
               <div className="flex items-center gap-3 mb-2">
-                <span className="bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent text-[clamp(3.5rem,9vw,7.5rem)] tracking-wide">
+                <span className="bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent text-[clamp(3.5rem,6vw,5rem)] tracking-wide">
                   نفسك فيه
                 </span>
-                <Icon icon="fluent:sparkle-28-filled" className="text-[#0B43FD] shrink-0 drop-shadow-[0_0_10px_rgba(11,67,253,0.6)]" style={{ fontSize: "clamp(1.6rem,4.5vw,3rem)" }} />
+                <Icon icon="fluent:sparkle-28-filled" className="text-[#0B43FD] shrink-0 drop-shadow-[0_0_10px_rgba(11,67,253,0.6)]" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)" }} />
               </div>
-              <div className="text-[clamp(2rem,5vw,4rem)]">يبقي ف إيدك</div>
+              <div className="text-[clamp(2rem,3.5vw,2.8rem)]">يبقي ف إيدك</div>
             </div>
             <p className="text-[clamp(0.85rem,2vw,1rem)] text-[#333] leading-[1.6] font-normal mb-5 max-w-[420px]">
               أحدث أجهزة <span className="text-[#0B43FD]">Apple</span> بأسعار تنافسية مع تقسيط مرن — نضمن لك أفضل تجربة من الاختيار حتى التوصيل.
             </p>
+            {/* Desktop-only features */}
+            <div className="hidden sm:flex items-center gap-6 mb-6 max-w-[420px]">
+              <div className="flex flex-col items-center gap-1.5 flex-1">
+                <Icon icon="solar:tag-price-bold" className="text-[#0B43FD] drop-shadow-[0_0_6px_rgba(11,67,253,0.3)]" style={{ fontSize: "1.4rem" }} />
+                <span className="text-[0.78rem] font-semibold text-[#111] text-center leading-tight">أسعار تنافسية</span>
+                <span className="text-[0.7rem] text-[#555] text-center leading-tight">أفضل سعر مضمون</span>
+              </div>
+              <div className="w-px self-stretch bg-[#0B43FD]/20" />
+              <div className="flex flex-col items-center gap-1.5 flex-1">
+                <Icon icon="solar:card-bold" className="text-[#0B43FD] drop-shadow-[0_0_6px_rgba(11,67,253,0.3)]" style={{ fontSize: "1.4rem" }} />
+                <span className="text-[0.78rem] font-semibold text-[#111] text-center leading-tight">تقسيط مريح</span>
+                <span className="text-[0.7rem] text-[#555] text-center leading-tight">دفعات مرنة بدون فوائد</span>
+              </div>
+              <div className="w-px self-stretch bg-[#0B43FD]/20" />
+              <div className="flex flex-col items-center gap-1.5 flex-1">
+                <Icon icon="solar:delivery-bold" className="text-[#0B43FD] drop-shadow-[0_0_6px_rgba(11,67,253,0.3)]" style={{ fontSize: "1.4rem" }} />
+                <span className="text-[0.78rem] font-semibold text-[#111] text-center leading-tight">توصيل سريع</span>
+                <span className="text-[0.7rem] text-[#555] text-center leading-tight">لجميع مناطق المملكة</span>
+              </div>
+              <div className="w-px self-stretch bg-[#0B43FD]/20" />
+              <div className="flex flex-col items-center gap-1.5 flex-1">
+                <Icon icon="solar:shield-check-bold" className="text-[#0B43FD] drop-shadow-[0_0_6px_rgba(11,67,253,0.3)]" style={{ fontSize: "1.4rem" }} />
+                <span className="text-[0.78rem] font-semibold text-[#111] text-center leading-tight">ضمان معتمد</span>
+                <span className="text-[0.7rem] text-[#555] text-center leading-tight">على جميع المنتجات</span>
+              </div>
+            </div>
+            <div className="hidden sm:block h-px bg-gradient-to-l from-transparent via-[#0B43FD]/30 to-transparent mb-6 max-w-[420px]" />
             <div className="flex gap-3 flex-wrap">
               <button className="bg-[#0B43FD] text-white border-none rounded-2xl px-5 sm:px-8 py-2.5 sm:py-3.5 text-[clamp(0.85rem,2.5vw,1rem)] font-bold inline-flex items-center gap-2 cursor-pointer shadow-[0_4px_24px_rgba(11,67,253,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:scale-[1.03] hover:shadow-[0_8px_32px_rgba(11,67,253,0.55)]">
                 <FiShoppingBag size={16} />
