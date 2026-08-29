@@ -11,6 +11,7 @@
 }
 
 @theme {
+  --breakpoint-xs: 400px;
   --breakpoint-lg2: 1000px;
 }
 

@@ -92,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
     <article className="group relative flex flex-col bg-white rounded-[28px] overflow-hidden border border-black/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-all duration-300 hover:shadow-[0_16px_48px_rgba(11,67,253,0.13),0_4px_16px_rgba(0,0,0,0.07)] hover:-translate-y-1 h-full">
 
       {/* ── Image area ── */}
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3/3" }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3/2.2" }}>
         {/* Gradient bg */}
         <div
           className="absolute inset-0 transition-colors duration-500 z-0"
@@ -115,8 +115,8 @@ function ProductCard({ product }: { product: Product }) {
                   src={c.image}
                   alt={`${product.name} - ${c.name}`}
                   fill
-                  sizes="(max-width: 640px) 90vw, (max-width: 1100px) 45vw, 23vw"
-                  className="object-contain p-5 transition-transform duration-500"
+                  sizes="(max-width: 400px) 80vw, (max-width: 640px) 90vw, (max-width: 1100px) 45vw, 23vw"
+                  className="object-contain p-3 xs:p-5 transition-transform duration-500"
                   priority={product.id === "17-pro-max"}
                 />
               </div>
@@ -131,10 +131,10 @@ function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* ── Content ── */}
-      <div className="flex flex-col p-4 gap-2.5">
+      <div className="flex flex-col p-3 xs:p-4 gap-2">
 
         {/* Name */}
-        <h3 className="text-[1rem] font-black text-[#0a0a0a] leading-snug tracking-tight">
+        <h3 className="text-[0.82rem] xs:text-[1rem] font-black text-[#0a0a0a] leading-snug tracking-tight">
           {product.name}
         </h3>
 
@@ -148,8 +148,8 @@ function ProductCard({ product }: { product: Product }) {
               aria-pressed={activeColor === i}
               className={`rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 ${
                 activeColor === i
-                  ? "w-5 h-5 ring-2 ring-[#0B43FD] ring-offset-2 scale-110"
-                  : "w-4 h-4 hover:scale-110 hover:ring-2 hover:ring-[#0B43FD]/30 hover:ring-offset-1"
+                  ? "w-4 h-4 xs:w-5 xs:h-5 ring-2 ring-[#0B43FD] ring-offset-2 scale-110"
+                  : "w-3.5 h-3.5 xs:w-4 xs:h-4 hover:scale-110 hover:ring-2 hover:ring-[#0B43FD]/30 hover:ring-offset-1"
               }`}
               style={{ backgroundColor: c.value, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.1)" }}
             />
@@ -159,7 +159,7 @@ function ProductCard({ product }: { product: Product }) {
         {/* Storage */}
         <div className="flex gap-1.5">
           {product.storage.map((s) => (
-            <span key={s} className="px-2.5 py-1 rounded-lg text-[0.68rem] font-semibold bg-[#f4f6ff] text-[#6b7280] border border-[#e8edf5] select-none">
+            <span key={s} className="px-1.5 xs:px-2.5 py-0.5 xs:py-1 rounded-lg text-[0.6rem] xs:text-[0.68rem] font-semibold bg-[#f4f6ff] text-[#6b7280] border border-[#e8edf5] select-none">
               {s}
             </span>
           ))}
@@ -167,11 +167,11 @@ function ProductCard({ product }: { product: Product }) {
 
         {/* Buttons */}
         <div className="flex gap-2 w-full">
-          <button className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-[12px] bg-[#0B43FD] text-white text-[0.8rem] font-bold shadow-[0_4px_16px_rgba(11,67,253,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(11,67,253,0.5)] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2">
-            <FiShoppingBag size={13} />
+          <button className="flex-1 flex items-center justify-center gap-1 py-2 xs:py-2.5 rounded-[10px] xs:rounded-[12px] bg-[#0B43FD] text-white text-[0.72rem] xs:text-[0.8rem] font-bold shadow-[0_4px_16px_rgba(11,67,253,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(11,67,253,0.5)] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2">
+            <FiShoppingBag size={11} />
             تسوق الآن
           </button>
-          <button className="px-3.5 py-2.5 rounded-[12px] bg-transparent text-[#0B43FD] text-[0.78rem] font-semibold border border-[#0B43FD]/25 transition-all duration-200 hover:bg-[#0B43FD]/6 hover:border-[#0B43FD]/50 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 whitespace-nowrap">
+          <button className="px-2.5 xs:px-3.5 py-2 xs:py-2.5 rounded-[10px] xs:rounded-[12px] bg-transparent text-[#0B43FD] text-[0.68rem] xs:text-[0.78rem] font-semibold border border-[#0B43FD]/25 transition-all duration-200 hover:bg-[#0B43FD]/6 hover:border-[#0B43FD]/50 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 whitespace-nowrap">
             اعرف المزيد
           </button>
         </div>
@@ -245,8 +245,9 @@ export default function ShopByModel() {
           slidesPerView={1.2}
           spaceBetween={12}
           breakpoints={{
-            350:  { slidesPerView: 1,    spaceBetween: 12 },
-            380:  { slidesPerView: 1.3,  spaceBetween: 12 },
+            0:    { slidesPerView: 1.15, spaceBetween: 10 },
+            350:  { slidesPerView: 1.25, spaceBetween: 10 },
+            400:  { slidesPerView: 1.4,  spaceBetween: 12 },
             480:  { slidesPerView: 1.8,  spaceBetween: 14 },
             640:  { slidesPerView: 2.4,  spaceBetween: 18 },
             900:  { slidesPerView: 3,    spaceBetween: 20 },
