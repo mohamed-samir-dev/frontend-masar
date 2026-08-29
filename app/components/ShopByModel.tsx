@@ -92,7 +92,7 @@ function ProductCard({ product }: { product: Product }) {
     <article className="group relative flex flex-col bg-white rounded-[28px] overflow-hidden border border-black/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.07)] transition-all duration-300 hover:shadow-[0_16px_48px_rgba(11,67,253,0.13),0_4px_16px_rgba(0,0,0,0.07)] hover:-translate-y-1 h-full">
 
       {/* ── Image area ── */}
-      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3/2.2" }}>
+      <div className="relative w-full overflow-hidden" style={{ aspectRatio: "3/2.8" }}>
         {/* Gradient bg */}
         <div
           className="absolute inset-0 transition-colors duration-500 z-0"
@@ -124,10 +124,7 @@ function ProductCard({ product }: { product: Product }) {
           ))}
         </Swiper>
 
-        {/* Top label */}
-        <div className="absolute top-3 right-3 z-20 bg-white/70 backdrop-blur-md text-[#0B43FD] text-[0.62rem] font-semibold px-2.5 py-1 rounded-full border border-[#0B43FD]/15 leading-none">
-          {product.subtitle}
-        </div>
+
       </div>
 
       {/* ── Content ── */}
