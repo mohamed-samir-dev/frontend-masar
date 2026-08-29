@@ -69,6 +69,7 @@ export default async function Footer() {
           <ul className="space-y-2.5 text-sm">
             {[
               { label: "عن مؤسسة البلاد الحديثة للإلكترونيات", href: "/about" },
+              { label: "خطط التقسيط", href: "/taqseet" },
               { label: "طرق الدفع", href: "/payment" },
               { label: "سياسة الاستبدال والاسترجاع", href: "/return-policy" },
               { label: "سياسة الخصوصية واتفاقية الاستخدام", href: "/privacy" },
