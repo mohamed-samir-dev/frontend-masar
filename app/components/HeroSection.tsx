@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { FiShoppingBag, FiCreditCard, FiArrowLeft } from "react-icons/fi";
 import { Icon } from "@iconify/react";
 
@@ -10,12 +11,8 @@ const slide3Features = [
   { icon: "solar:shield-check-bold", label: "ضمان معتمد", sub: "على كل المنتجات" },
 ];
 
-const scrollToInstallment = () => {
-  const el = document.getElementById("installment-plans");
-  if (el) el.scrollIntoView({ behavior: "smooth" });
-};
-
 export default function HeroSection() {
+  const router = useRouter();
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
 
@@ -152,7 +149,7 @@ export default function HeroSection() {
                 <FiArrowLeft size={14} className="opacity-70" />
               </button>
               <button
-                onClick={scrollToInstallment}
+                onClick={() => router.push("/taqseet")}
                 className="bg-white/80 text-[#0B43FD] border-2 border-[#0B43FD] rounded-2xl px-4 sm:px-7 py-2.5 sm:py-3.5 text-[clamp(0.8rem,2.5vw,0.95rem)] font-bold inline-flex items-center gap-2 cursor-pointer backdrop-blur-sm transition-all duration-200 hover:bg-[#0B43FD]/10 hover:-translate-y-0.5 shadow-[0_2px_12px_rgba(11,67,253,0.1)]"
               >
                 <FiCreditCard size={15} />
@@ -203,7 +200,7 @@ export default function HeroSection() {
                 تسوق الآن
               </button>
               <button
-                onClick={scrollToInstallment}
+                onClick={() => router.push("/taqseet")}
                 className="bg-[#0B43FD]/8 text-[#0B43FD] border-2 border-[#0B43FD] rounded-2xl px-4 sm:px-7 py-2.5 sm:py-3 text-[clamp(0.8rem,2.5vw,0.95rem)] font-bold inline-flex items-center gap-2 cursor-pointer backdrop-blur-sm transition-all duration-200 hover:bg-[#0B43FD]/15 hover:-translate-y-0.5"
               >
                 <FiCreditCard size={15} />
