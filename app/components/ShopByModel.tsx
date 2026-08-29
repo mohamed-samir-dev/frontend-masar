@@ -244,7 +244,7 @@ export default function ShopByModel() {
           grabCursor
           spaceBetween={20}
           breakpoints={{
-            0:    { slidesPerView: 1.15, spaceBetween: 12 },
+            0:    { slidesPerView: 1.2,  spaceBetween: 12 },
             380:  { slidesPerView: 1.3,  spaceBetween: 12 },
             480:  { slidesPerView: 1.8,  spaceBetween: 14 },
             640:  { slidesPerView: 2.4,  spaceBetween: 18 },
