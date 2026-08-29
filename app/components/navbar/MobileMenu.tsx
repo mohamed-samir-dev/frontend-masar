@@ -36,7 +36,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
         dir="rtl"
       >
         <div className="py-2">
-          <div className="px-4 py-4 text-base font-bold text-white border-b border-[#1F7A8C]" style={{ background: '#1a6b7d' }}>
+          <div className="px-4 py-4 text-base font-bold text-white border-b border-[#0B43FD]/20" style={{ background: '#0B43FD' }}>
             أقسام المتجر
           </div>
           {items.map((item) => (
@@ -44,7 +44,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
               {hasChildren(item) ? (
                 <button
                   onClick={() => toggleDropdown(item.label)}
-                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#F5F7F8] hover:text-[#155E6F] transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#0B43FD]/8 hover:text-[#0B43FD] transition-colors"
                 >
                   {item.label}
                   <span className={`transition-transform duration-200 ${openDropdown === item.label ? "rotate-180" : ""}`}>
@@ -54,7 +54,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
               ) : (
                 <Link
                   href={item.href}
-                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#F5F7F8] hover:text-[#155E6F] transition-colors"
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-[#0B43FD]/8 hover:text-[#0B43FD] transition-colors"
                   onClick={onClose}
                 >
                   {item.label}
@@ -70,14 +70,14 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
                   {/* groups mode */}
                   {item.groups?.map((group, gi) => (
                     <div key={gi}>
-                      <div className="px-4 py-1.5 text-xs font-bold text-[#1F7A8C] uppercase tracking-wide border-b border-[#F5F7F8]">
+                      <div className="px-4 py-1.5 text-xs font-bold text-[#0B43FD] uppercase tracking-wide border-b border-[#0B43FD]/10">
                         {group.groupLabel}
                       </div>
                       {group.items.map((child, ci) => (
                         <Link
                           key={`${child.href}-${ci}`}
                           href={child.href}
-                          className="block px-8 py-2.5 text-sm text-gray-600 hover:text-[#155E6F] hover:bg-[#F5F7F8] transition-colors"
+                          className="block px-8 py-2.5 text-sm text-gray-600 hover:text-[#0B43FD] hover:bg-[#0B43FD]/8 transition-colors"
                           onClick={onClose}
                         >
                           {child.label}
@@ -90,7 +90,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
                     <Link
                       key={`${child.href}-${index}`}
                       href={child.href}
-                      className="block px-8 py-2.5 text-sm text-gray-600 hover:text-[#155E6F] hover:bg-[#F5F7F8] transition-colors"
+                      className="block px-8 py-2.5 text-sm text-gray-600 hover:text-[#0B43FD] hover:bg-[#0B43FD]/8 transition-colors"
                       onClick={onClose}
                     >
                       {child.label}

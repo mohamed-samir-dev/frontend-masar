@@ -73,7 +73,7 @@ export default function Navbar() {
   }, [mobileOpen]);
 
   return (
-    <nav className="shadow-md sticky top-0 z-50" style={{ background: '#ffffff' }} dir="rtl">
+    <nav className="sticky top-0 z-50 bg-white border-b border-[#0B43FD]/10 shadow-[0_2px_16px_rgba(11,67,253,0.08)]" dir="rtl">
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         {/* Row 1: Logo + Icons (mobile: same row with hamburger) */}
         <div className="flex items-center justify-between h-16 sm:h-16 lg:h-20">
@@ -81,7 +81,7 @@ export default function Navbar() {
           <div className="flex items-center gap-1">
             <button
               aria-label="القائمة"
-              className="lg:hidden p-1 sm:p-2 text-[#155E6F] hover:text-[#6DBE00] rounded-full transition-colors"
+              className="lg:hidden p-1 sm:p-2 text-[#0B43FD] hover:text-[#4f8bff] hover:bg-[#0B43FD]/8 rounded-full transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
@@ -110,12 +110,12 @@ export default function Navbar() {
           <div className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
             <button
               aria-label="بحث"
-              className="p-1.5 sm:p-2 text-[#155E6F] hover:text-[#6DBE00] hover:bg-[#F5F7F8] rounded-full transition-colors"
+              className="p-1.5 sm:p-2 text-[#0B43FD] hover:text-[#4f8bff] hover:bg-[#0B43FD]/8 rounded-full transition-colors"
               onClick={() => setSearchOpen((v) => !v)}
             >
               <SearchIcon />
             </button>
-            <Link href="/cart" aria-label="السلة" className="p-1.5 sm:p-2 text-[#155E6F] hover:text-[#6DBE00] hover:bg-[#F5F7F8] rounded-full transition-colors relative">
+            <Link href="/cart" aria-label="السلة" className="p-1.5 sm:p-2 text-[#0B43FD] hover:text-[#4f8bff] hover:bg-[#0B43FD]/8 rounded-full transition-colors relative">
               <CartIcon />
               {mounted && itemCount > 0 && (
                 <span className="absolute -top-0.5 -left-0.5 bg-red-500 text-white text-[11px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-0.5">
@@ -127,13 +127,13 @@ export default function Navbar() {
         </div>
 
         {/* Row 2: Desktop nav links (desktop only) */}
-        <div className="hidden lg:flex justify-center border-t border-gray-100 py-1">
+        <div className="hidden lg:flex justify-center border-t border-[#0B43FD]/10 py-1">
           <DesktopNav items={navItems} />
         </div>
       </div>
 
       {searchOpen && (
-        <div ref={searchWrapRef} className="border-t border-gray-100 px-4 py-2 relative" dir="rtl">
+        <div ref={searchWrapRef} className="border-t border-[#0B43FD]/10 bg-white px-4 py-2 relative" dir="rtl">
           <div className="flex gap-2">
             <input
               ref={searchInputRef}
@@ -141,11 +141,11 @@ export default function Navbar() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="ابحث عن منتج..."
-              className="flex-1 border border-[#1F7A8C] rounded-full px-4 py-1.5 text-sm outline-none focus:border-[#6DBE00]"
+              className="flex-1 border border-[#0B43FD]/30 rounded-full px-4 py-1.5 text-sm outline-none focus:border-[#0B43FD]"
             />
             {searching && (
               <div className="absolute left-6 top-1/2 -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-[#6DBE00] border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#0B43FD] border-t-transparent rounded-full animate-spin" />
               </div>
             )}
           </div>
