@@ -23,7 +23,7 @@ export const imageFields = [
   { key: "stamp", label: "الختم" },
 ];
 
-export const defaultData = {
+export const defaultData: Record<string, unknown> = {
   nameAr: "",
   nameEn: "",
   addressAr: "",
@@ -42,6 +42,17 @@ export const defaultData = {
   header: "",
   footer: "",
   stamp: "",
+  qrImage: "",
+  qrLink: "",
+  img1: "",
+  link1: "",
+  link1Type: "link",
+  file1: "",
+  img2: "",
+  link2: "",
+  link2Type: "link",
+  file2: "",
+  footerItems: [],
 };
 
 export const toFullUrl = (url: string) => {

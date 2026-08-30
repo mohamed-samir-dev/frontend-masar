@@ -12,12 +12,12 @@ export function useCompany() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/admin/company`)
+    fetch(`/api/admin/company`, { credentials: "include" })
       .then((r) => r.json())
       .then((res) => {
         const imageKeys = ["logo", "header", "footer", "stamp"];
         const merged: CompanyData = { ...defaultData };
-        for (const k of Object.keys(defaultData)) {
+        for (const k of Object.keys(res)) {
           if (res[k] !== undefined && res[k] !== "") {
             merged[k] = imageKeys.includes(k) ? toFullUrl(res[k]) : res[k];
           }
@@ -72,11 +72,11 @@ export function useCompany() {
     try {
       const res = await fetch(`/api/admin/company`, {
         method: "PUT",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error();
-      await fetch("/api/revalidate?tag=company", { method: "POST" });
       toast.success("تم حفظ بيانات الشركة");
     } catch {
       toast.error("فشل الحفظ");

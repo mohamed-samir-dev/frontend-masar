@@ -173,6 +173,7 @@ export default function FilesPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+    if (r.ok) await fetch(`/api/revalidate?tag=company&secret=${process.env.NEXT_PUBLIC_REVALIDATE_SECRET || ""}`, { method: "POST" });
     setSavingSection(null);
     showMsg(section, r.ok ? "✅ تم الحفظ" : "❌ حدث خطأ");
   }

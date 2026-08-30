@@ -7,9 +7,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
   const tag = req.nextUrl.searchParams.get("tag") || "products";
-  revalidateTag(tag, "tag");
+  revalidateTag(tag);
   if (tag === "home-settings") {
-    revalidateTag("products", "tag");
+    revalidateTag("products");
+    revalidatePath("/");
+  }
+  if (tag === "company") {
+    revalidatePath("/");
+  }
+  if (tag === "category-banners") {
     revalidatePath("/");
   }
   return NextResponse.json({ revalidated: true, tag });

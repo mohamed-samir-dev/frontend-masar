@@ -9,7 +9,7 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
   const [orderCount, setOrderCount] = useState(0);
 
   useEffect(() => {
-    fetch("/api/admin/company")
+    fetch("/api/admin/company", { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         if (d.logo) setLogo(d.logo.startsWith("http") ? d.logo : `http://localhost:5000${d.logo}`);
@@ -17,7 +17,7 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
       .catch(() => {});
 
     const loadOrders = () =>
-      fetch("/api/admin/orders")
+      fetch("/api/admin/orders", { credentials: "include" })
         .then((r) => r.json())
         .then((d) => setOrderCount(Array.isArray(d) ? d.length : 0))
         .catch(() => {});
