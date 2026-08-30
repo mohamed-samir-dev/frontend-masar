@@ -1,6 +1,20 @@
+export interface StorageOption {
+  storage: string;
+  originalPrice: number;
+  salePrice?: number;
+}
+
+export interface ProductVariant {
+  color: string;
+  colorCode: string;
+  images: string[];
+  storageOptions: StorageOption[];
+}
+
 export interface Product {
   _id: string;
   name: string;
+  brief?: string;
   originalPrice: number;
   salePrice?: number;
   price: number;
@@ -8,6 +22,7 @@ export interface Product {
   description?: string;
   image?: string;
   images?: string[];
+  variants?: ProductVariant[];
   color?: string;
   storage?: string;
   network?: string;

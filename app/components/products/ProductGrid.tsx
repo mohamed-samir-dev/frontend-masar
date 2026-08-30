@@ -75,17 +75,25 @@ const CategoryRow = memo(function CategoryRow({ category, items, isFirst }: { ca
   return (
     <div className="mb-8 sm:mb-12">
       {/* Category Header */}
-      <div className="flex items-center gap-3 mb-5 sm:mb-7" dir="rtl">
-        <div className="w-1 sm:w-1.5 h-6 sm:h-8 rounded-full bg-gradient-to-b from-[#1F7A8C] to-[#155E6F]" />
-        <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-extrabold text-gray-800 whitespace-nowrap">{category}</h2>
-        <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gray-300 to-transparent" />
+      <div className="flex items-end justify-between mb-3 sm:mb-4" dir="rtl">
+        {/* Title + underline */}
+        <div className="flex flex-col gap-1 sm:gap-1.5">
+          <h2 className="text-[clamp(1rem,4vw,1.6rem)] font-black text-[#0a0a0a] leading-none tracking-tight">
+            {category}
+          </h2>
+          <div className="h-[3px] w-8 sm:w-12 rounded-full bg-gradient-to-l from-[#0B43FD] to-[#4f8bff]" />
+        </div>
+        {/* View All */}
         <Link
           href={href}
-          className="text-[10px] sm:text-xs font-semibold text-[#1F7A8C] hover:text-white whitespace-nowrap px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#1F7A8C]/40 hover:bg-[#1F7A8C] transition-all duration-300"
+          className="inline-flex items-center gap-1.5 text-[clamp(0.65rem,2.5vw,0.78rem)] font-bold text-[#0B43FD] whitespace-nowrap px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full border border-[#0B43FD]/30 hover:bg-[#0B43FD]/6 transition-all duration-200"
         >
-          عرض الكل ←
+          <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          عرض الكل
         </Link>
       </div>
+      {/* Dotted divider */}
+      <div className="border-t-2 border-dashed border-[#0B43FD]/20 mb-4 sm:mb-6" />
 
       {/* Products Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
@@ -159,7 +167,7 @@ export default function ProductGrid({
 
   return (
     <section className="w-full py-6 sm:py-8 overflow-hidden">
-    <div className="max-w-6xl mx-auto px-3 sm:px-4">
+    <div className="max-w-[1380px] mx-auto px-4 sm:px-8">
       {orderedCategories.map((category, catIdx) => (
         <div key={category}>
           <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
