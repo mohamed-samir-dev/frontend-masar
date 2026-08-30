@@ -53,9 +53,9 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-l from-white/80 via-white/55 to-transparent" />
           <div className="relative z-10 max-w-[700px] pr-5 sm:pr-14 ml-auto mr-0 sm:mr-[5%]">
             <div className="font-black text-[#0a0a0a] tracking-tight mb-3 sm:mb-4">
-              <div className="leading-[1.1] mb-2 text-[clamp(1.1rem,2.5vw,1.8rem)]">اكتشف عالم</div>
+              <div className="leading-[1.1] mb-2 text-[clamp(1.4rem,2.5vw,1.8rem)]">اكتشف عالم</div>
               <div className="leading-[1.1]">
-                <span className="inline-block bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent py-1 text-[clamp(2rem,5vw,4rem)] tracking-wide">
+                <span className="inline-block bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent py-1 text-[clamp(2.8rem,5vw,4rem)] tracking-wide">
                   الابتكار
                 </span>
               </div>
