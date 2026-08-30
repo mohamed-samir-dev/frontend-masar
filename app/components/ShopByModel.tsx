@@ -168,9 +168,6 @@ function ProductCard({ product }: { product: Product }) {
             <FiShoppingBag size={11} />
             تسوق الآن
           </button>
-          <button className="px-2.5 xs:px-3.5 py-2 xs:py-2.5 rounded-[10px] xs:rounded-[12px] bg-transparent text-[#0B43FD] text-[0.68rem] xs:text-[0.78rem] font-semibold border border-[#0B43FD]/25 transition-all duration-200 hover:bg-[#0B43FD]/6 hover:border-[#0B43FD]/50 active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 whitespace-nowrap">
-            اعرف المزيد
-          </button>
         </div>
 
       </div>
