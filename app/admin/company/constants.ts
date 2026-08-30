@@ -23,7 +23,7 @@ export const imageFields = [
   { key: "stamp", label: "الختم" },
 ];
 
-export const defaultData: Record<string, unknown> = {
+export const defaultData: Record<string, string | string[]> = {
   nameAr: "",
   nameEn: "",
   addressAr: "",
