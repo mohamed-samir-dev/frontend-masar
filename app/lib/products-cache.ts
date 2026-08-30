@@ -16,21 +16,17 @@ export const getCachedProducts = unstable_cache(
   { revalidate: 60, tags: ["products"] }
 );
 
-export const getCachedProduct = unstable_cache(
-  async (id: string) => {
-    try {
-      const products: { _id: string }[] = await getCachedProducts();
-      const found = products.find((p) => p._id === id);
-      if (found) return found;
-      const res = await fetch(`${BACKEND}/api/products/${id}`, { next: { tags: ["products"] } });
-      return res.ok ? res.json() : null;
-    } catch {
-      return null;
-    }
-  },
-  ["product"],
-  { revalidate: false, tags: ["products"] }
-);
+export const getCachedProduct = async (id: string) => {
+  try {
+    const products: { _id: string }[] = await getCachedProducts();
+    const found = products.find((p) => p._id === id);
+    if (found) return found;
+    const res = await fetch(`${BACKEND}/api/products/${id}`, { next: { tags: ["products"], revalidate: 60 } });
+    return res.ok ? res.json() : null;
+  } catch {
+    return null;
+  }
+};
 
 export async function searchCachedProducts(q: string, brand?: string) {
   const products: Record<string, string>[] = await getCachedProducts();
