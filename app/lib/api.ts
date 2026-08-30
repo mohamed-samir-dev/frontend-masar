@@ -1,4 +1,4 @@
-const ALLOWED_HOSTS = ["localhost", "pasmthatfee.com", "albilaad-ksa.com"];
+const ALLOWED_HOSTS = ["localhost", "backend-masar-production.up.railway.app"];
 const ALLOWED_PREFIXES = [
   "/api/admin",
   "/api/products",
