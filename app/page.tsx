@@ -36,7 +36,7 @@ async function getBannerMap(categories: string[]) {
   try {
     const r = await fetch(
       `${BACKEND}/api/admin/category-banners-bulk?categories=${encodeURIComponent(categories.join(","))}`,
-      { next: { revalidate: 3600 } }
+      { cache: "no-store" }
     );
     return r.ok ? r.json() : {};
   } catch {
