@@ -105,7 +105,7 @@ export default function HeroSection() {
             <div className="font-black text-[#0a0a0a] tracking-tight mb-2 leading-[1.2]">
               <div className="mb-1.5 text-[clamp(1.1rem,2.5vw,1.8rem)]">خلي اللي</div>
               <div className="flex items-center gap-3 mb-1.5">
-                <span className="bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent text-[clamp(2rem,4vw,3.2rem)] tracking-wide">
+                <span className="bg-gradient-to-br from-[#0B43FD] to-[#4f8bff] bg-clip-text text-transparent text-[clamp(2.8rem,5vw,4rem)] tracking-wide">
                   نفسك فيه
                 </span>
                 <Icon icon="fluent:sparkle-28-filled" className="text-[#0B43FD] shrink-0 drop-shadow-[0_0_10px_rgba(11,67,253,0.6)]" style={{ fontSize: "clamp(1rem,2vw,1.4rem)" }} />
