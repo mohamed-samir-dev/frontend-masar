@@ -56,12 +56,16 @@ async function getBannerMap(categories: string[]) {
 }
 
 export default async function Home() {
-  const [c, products, homeConfig, heroBanners] = await Promise.all([
+  const [c, products, homeConfig, rawBanners] = await Promise.all([
     getCompany(),
     getCachedProducts(),
     getHomeConfig(),
     getBanners(),
   ]);
+  const heroBanners = (rawBanners as { url: string; active: boolean }[]).map((b) => ({
+    ...b,
+    url: b.url ? (b.url.startsWith("http") ? b.url : `${BACKEND}${b.url}`) : "",
+  }));
   const categories = [...new Set((products as { category?: string }[]).map((p) => p.category).filter(Boolean))] as string[];
   const bannerMap = await getBannerMap(categories);
   const siteName = c.nameAr || "مؤسسة البلاد الحديثة للإلكترونيات";
