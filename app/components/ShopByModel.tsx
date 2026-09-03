@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, A11y, EffectFade } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 import { FiShoppingBag } from "react-icons/fi";
+import Link from "next/link";
 import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -164,10 +165,13 @@ function ProductCard({ product }: { product: Product }) {
 
         {/* Buttons */}
         <div className="flex gap-2 w-full">
-          <button className="flex-1 flex items-center justify-center gap-1 py-2 xs:py-2.5 rounded-[10px] xs:rounded-[12px] bg-[#0B43FD] text-white text-[0.72rem] xs:text-[0.8rem] font-bold shadow-[0_4px_16px_rgba(11,67,253,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(11,67,253,0.5)] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2">
+          <Link
+            href={`/shop/${product.id}`}
+            className="flex-1 flex items-center justify-center gap-1 py-2 xs:py-2.5 rounded-[10px] xs:rounded-[12px] bg-[#0B43FD] text-white text-[0.72rem] xs:text-[0.8rem] font-bold shadow-[0_4px_16px_rgba(11,67,253,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(11,67,253,0.5)] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2"
+          >
             <FiShoppingBag size={11} />
             تسوق الآن
-          </button>
+          </Link>
         </div>
 
       </div>

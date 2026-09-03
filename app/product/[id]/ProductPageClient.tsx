@@ -12,7 +12,17 @@ import ProductDetails from "./components/ProductDetails";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-export default function ProductPageClient({ id, initialProduct }: { id: string; initialProduct: Product | null }) {
+export default function ProductPageClient({ 
+  id, 
+  initialProduct,
+  initialColor,
+  initialStorage 
+}: { 
+  id: string; 
+  initialProduct: Product | null;
+  initialColor?: string;
+  initialStorage?: string;
+}) {
   const router = useRouter();
   const [product] = useState<Product | null>(initialProduct);
   const [addedToCart, setAddedToCart] = useState(false);
@@ -20,14 +30,57 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
   const [mobilePopup, setMobilePopup] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
+  const firstVariant = initialProduct?.variants?.[0];
+  
+  // Use initialColor/initialStorage from URL if provided, otherwise use first variant
+  const [selectedColor, setSelectedColor] = useState<string>(() => {
+    if (initialColor) {
+      // Check if this color exists in variants
+      const colorExists = initialProduct?.variants?.some(v => v.color === initialColor);
+      return colorExists ? initialColor : (firstVariant?.color ?? initialProduct?.color ?? "");
+    }
+    return firstVariant?.color ?? initialProduct?.color ?? "";
+  });
+  
+  const [selectedStorage, setSelectedStorage] = useState<string>(() => {
+    if (initialStorage) {
+      // Find the variant for selected color
+      const variant = initialProduct?.variants?.find(v => v.color === selectedColor);
+      // Check if this storage exists in the variant
+      const storageExists = variant?.storageOptions?.some(s => s.storage === initialStorage);
+      return storageExists ? initialStorage : (firstVariant?.storageOptions?.[0]?.storage ?? initialProduct?.storage ?? "");
+    }
+    return firstVariant?.storageOptions?.[0]?.storage ?? initialProduct?.storage ?? "";
+  });
+
   if (!product)
     return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-400 text-lg">المنتج غير موجود</p></div>;
+
+  const activeVariant = product.variants?.find((v) => v.color === selectedColor);
+  const activeStorage = activeVariant?.storageOptions?.find((s) => s.storage === selectedStorage);
+
+  // Build dynamic display name: replace storage in name or append color+storage
+  const baseName = product.name.replace(/\d+GB|\d+TB/gi, "").replace(/\s{2,}/g, " ").trim();
+  const displayName = selectedColor || selectedStorage
+    ? `${baseName}${selectedStorage ? " – " + selectedStorage : ""}${selectedColor ? " | " + selectedColor : ""}`
+    : product.name;
+
+  const displayProduct: Product = {
+    ...product,
+    name: displayName,
+    color: selectedColor || product.color,
+    storage: selectedStorage || product.storage,
+    originalPrice: activeStorage?.originalPrice ?? product.originalPrice,
+    salePrice: activeStorage?.salePrice ?? product.salePrice,
+    image: activeVariant?.images?.[0] ?? product.image,
+    images: activeVariant?.images?.length ? activeVariant.images : product.images,
+  };
 
   const handleMobileAdd = () => {
     setMobileLoading(true);
     setTimeout(() => {
       setMobileLoading(false);
-      addItem(product);
+      addItem(displayProduct);
       setAddedToCart(true);
       setMobilePopup(true);
       setTimeout(() => setMobilePopup(false), 3000);
@@ -36,7 +89,11 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
 
   const resolveImg = (src: string) =>
     src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
-  const merged = [...(product.images || []), ...(product.image ? [product.image] : [])];
+  const merged = [
+    ...(activeVariant?.images || []),
+    ...(product.images || []),
+    ...(product.image ? [product.image] : []),
+  ];
   const allImages = [...new Set(merged)].map(resolveImg);
 
   const handleShare = async () => {
@@ -86,11 +143,19 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
             </div>
             {/* Info */}
             <div className="lg:col-span-5 pdp-scale" style={{ animationDelay: ".1s" }}>
-              <ProductInfo product={product} addedToCart={addedToCart} onAddToCart={() => { addItem(product); setAddedToCart(true); }} />
+              <ProductInfo
+                product={displayProduct}
+                addedToCart={addedToCart}
+                onAddToCart={() => { addItem(displayProduct); setAddedToCart(true); }}
+                selectedColor={selectedColor}
+                selectedStorage={selectedStorage}
+                onColorChange={(c) => { setSelectedColor(c); setAddedToCart(false); }}
+                onStorageChange={(s) => { setSelectedStorage(s); setAddedToCart(false); }}
+              />
             </div>
           </div>
 
-          <ProductDetails installment={product.installment} description={product.description} specs={product.specs} />
+          <ProductDetails installment={displayProduct.installment} description={displayProduct.description} specs={displayProduct.specs} />
         </div>
 
         {/* Mobile Floating CTA */}
@@ -107,8 +172,8 @@ export default function ProductPageClient({ id, initialProduct }: { id: string; 
           <div className="bg-white/95 backdrop-blur-xl border-t border-gray-200 px-4 py-3 safe-bottom">
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-gray-500 truncate">{product.name}</p>
-                <p className="text-base font-black text-red-600">{(product.salePrice ?? product.originalPrice ?? 0).toLocaleString("en-US")} <span className="text-xs font-bold">ر.س</span></p>
+                <p className="text-[10px] text-gray-500 truncate">{displayName}</p>
+                <p className="text-base font-black text-red-600">{(displayProduct.salePrice ?? displayProduct.originalPrice ?? 0).toLocaleString("en-US")} <span className="text-xs font-bold">ر.س</span></p>
               </div>
               {!addedToCart ? (
                 <button

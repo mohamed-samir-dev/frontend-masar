@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { Readex_Pro } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import ClientLayout from "./components/ClientLayout";
 import Footer from "./components/Footer";
-
-const readexPro = Readex_Pro({ subsets: ["arabic"], weight: ["400", "500", "600", "700"], display: "swap" });
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 const SITE_URL = "https://albilaad-ksa.com";
@@ -102,6 +99,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet" />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-18394753580"
           strategy="afterInteractive"
@@ -113,7 +113,7 @@ export default function RootLayout({
           gtag('config', 'AW-18394753580');`}
         </Script>
       </head>
-      <body className={`antialiased ${readexPro.className}`} suppressHydrationWarning>
+      <body className="antialiased" style={{ fontFamily: '"Almarai", sans-serif' }} suppressHydrationWarning>
         <ClientLayout footer={<Footer />}>{children}</ClientLayout>
       </body>
     </html>

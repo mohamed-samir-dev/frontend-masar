@@ -11,9 +11,13 @@ interface ProductInfoProps {
   product: Product;
   addedToCart: boolean;
   onAddToCart: () => void;
+  selectedColor: string;
+  selectedStorage: string;
+  onColorChange: (c: string) => void;
+  onStorageChange: (s: string) => void;
 }
 
-export default function ProductInfo({ product, addedToCart, onAddToCart }: ProductInfoProps) {
+export default function ProductInfo({ product, addedToCart, onAddToCart, selectedColor, selectedStorage, onColorChange, onStorageChange }: ProductInfoProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
@@ -48,6 +52,43 @@ export default function ProductInfo({ product, addedToCart, onAddToCart }: Produ
 
         {/* Name */}
         <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 leading-relaxed mb-3">{name}</h2>
+
+        {/* Color Variants */}
+        {product.variants && product.variants.length > 1 && (
+          <div className="mb-3">
+            <p className="text-xs font-bold text-gray-500 mb-2">اللون: <span className="text-gray-800">{selectedColor}</span></p>
+            <div className="flex gap-2">
+              {product.variants.map((v) => (
+                <button key={v.color} title={v.color}
+                  onClick={() => { onColorChange(v.color); onStorageChange(v.storageOptions?.[0]?.storage ?? ""); }}
+                  className={`w-7 h-7 rounded-full border-2 transition-transform duration-150 cursor-pointer ${
+                    selectedColor === v.color ? "border-[#1F7A8C] scale-110 shadow-[0_0_0_2px_rgba(31,122,140,0.25)]" : "border-gray-300"
+                  }`}
+                  style={{ backgroundColor: v.colorCode }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Storage Options */}
+        {product.variants?.find((v) => v.color === selectedColor)?.storageOptions?.length! > 1 && (
+          <div className="mb-3">
+            <p className="text-xs font-bold text-gray-500 mb-2">السعة: <span className="text-gray-800">{selectedStorage}</span></p>
+            <div className="flex flex-wrap gap-2">
+              {product.variants!.find((v) => v.color === selectedColor)!.storageOptions.map((opt) => (
+                <button key={opt.storage}
+                  onClick={() => onStorageChange(opt.storage)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer transition-colors duration-150 ${
+                    selectedStorage === opt.storage ? "bg-[#1F7A8C] text-white border-[#1F7A8C]" : "bg-white text-[#1F7A8C] border-[#1F7A8C]/30"
+                  }`}
+                >
+                  {opt.storage}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Tags */}
         {(color || storage || network) && (

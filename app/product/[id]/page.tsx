@@ -74,8 +74,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ color?: string; storage?: string }>;
+}) {
   const { id } = await params;
+  const { color, storage } = await searchParams;
   const [product, company] = await Promise.all([getCachedProduct(id), getCompany()]);
 
   const siteName = company.nameAr || "مؤسسة البلاد الحديثة للإلكترونيات";
@@ -110,7 +117,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <ProductPageClient id={id} initialProduct={product} />
+      <ProductPageClient id={id} initialProduct={product} initialColor={color} initialStorage={storage} />
     </>
   );
 }

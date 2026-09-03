@@ -65,35 +65,35 @@ export default function TaqseetClient() {
       {/* ── Hero ── */}
       <section className="w-full">
         {/* ≤1000px: image as background with overlay */}
-        <div className="relative lg2:hidden min-h-[380px] flex items-center">
+        <div className="relative lg2:hidden min-h-[320px] sm:min-h-[380px] flex items-center">
           <Image src="/taqset.webp" alt="خطط التقسيط" fill className="object-cover" priority />
           <div className="absolute inset-0 bg-black/55" />
           <motion.div
-            className="relative z-10 text-right px-4 py-10 w-full max-w-[340px] mr-0 ml-auto"
+            className="relative z-10 text-right px-4 py-8 w-full max-w-[320px] sm:max-w-[340px] mr-0 ml-auto"
             variants={stagger(0.12)}
             initial="hidden"
             animate="show"
           >
-            <motion.span variants={fadeUp} className="inline-block bg-white/20 text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-5">
+            <motion.span variants={fadeUp} className="inline-block bg-white/20 text-white text-xs sm:text-sm font-semibold px-3 py-1 sm:px-4 sm:py-1.5 rounded-full mb-3 sm:mb-5">
               امتلك الآن
             </motion.span>
-            <motion.h1 variants={fadeUp} className="font-black text-white leading-[1.1] mb-4">
-              <span className="block text-[clamp(2.8rem,10vw,4rem)] tracking-tight mb-2">
+            <motion.h1 variants={fadeUp} className="font-black text-white leading-[1.1] mb-3 sm:mb-4">
+              <span className="block text-2xl sm:text-[clamp(2.8rem,8vw,4rem)] tracking-tight mb-1 sm:mb-2">
                 تقسيط <span className="text-[#7b9fff]">أسهل</span>
               </span>
-              <span className="block text-[clamp(1.6rem,6vw,2.4rem)] text-white/90 font-bold">
+              <span className="block text-base sm:text-[clamp(1.6rem,5vw,2.4rem)] text-white/90 font-bold">
                 بشروط <span className="text-[#7b9fff]">أوضح</span>
               </span>
             </motion.h1>
-            <motion.p variants={fadeUp} className="text-white/80 text-sm leading-[1.9] mb-3">
+            <motion.p variants={fadeUp} className="text-white/80 text-[11px] sm:text-sm leading-[1.8] mb-2 sm:mb-3">
               نوفر لك تقسيطاً مرناً <span className="text-white font-semibold">بدون فوائد</span> على جميع الأجهزة،
               بدفعة مقدمة بسيطة والباقي أقساط شهرية مريحة.
             </motion.p>
-            <motion.p variants={fadeUp} className="text-white/80 text-sm leading-[1.9] mb-8">
+            <motion.p variants={fadeUp} className="text-white/80 text-[11px] sm:text-sm leading-[1.8] mb-6 sm:mb-8">
               لا رسوم خفية، لا تعقيدات — فقط شروط واضحة.
             </motion.p>
             <motion.div variants={fadeUp}>
-              <Image src="/mada-visa-mas.webp" alt="وسائل الدفع المقبولة" width={200} height={55} className="object-contain brightness-0 invert" />
+              <Image src="/mada-visa-mas.webp" alt="وسائل الدفع المقبولة" width={160} height={44} className="object-contain brightness-0 invert sm:w-[200px] sm:h-[55px]" />
             </motion.div>
           </motion.div>
         </div>
@@ -140,9 +140,9 @@ export default function TaqseetClient() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="px-4 sm:px-6 sm:-mt-14 relative z-10 pb-8 sm:pb-12">
+      <section className="px-3 sm:px-6 sm:-mt-14 relative z-10 pb-6 sm:pb-12">
         <motion.div
-          className="w-full rounded-3xl shadow-md bg-white flex flex-col sm:flex-row"
+          className="w-full rounded-2xl sm:rounded-3xl shadow-md bg-white flex flex-row sm:flex-row"
           variants={fadeUp}
           initial="hidden"
           whileInView="show"
@@ -152,17 +152,17 @@ export default function TaqseetClient() {
             <motion.div
               key={i}
               variants={fadeUp}
-              className={`flex flex-1 items-center justify-center gap-4 px-6 py-6 sm:px-10 sm:py-10 ${
+              className={`flex flex-1 items-center justify-center gap-2 sm:gap-4 px-2 py-4 sm:px-10 sm:py-10 ${
                 i < bannerItems.length - 1
-                  ? "border-b sm:border-b-0 sm:border-l border-gray-200"
+                  ? "border-l border-gray-200"
                   : ""
               }`}
             >
-              <div className="flex flex-col gap-1">
-                <span className="text-[#333] font-semibold text-sm sm:text-base lg:text-lg">{item.title}</span>
-                <span className="text-[#0B43FD] font-black text-[1.2rem] sm:text-[1.6rem] lg:text-[2rem] leading-none">{item.value}</span>
+              <div className="flex flex-col gap-0.5 sm:gap-1">
+                <span className="text-[#333] font-semibold text-[10px] sm:text-base lg:text-lg">{item.title}</span>
+                <span className="text-[#0B43FD] font-black text-[0.95rem] sm:text-[1.6rem] lg:text-[2rem] leading-none">{item.value}</span>
               </div>
-              <Icon icon={item.icon} className="text-[#0B43FD] shrink-0" style={{ fontSize: "1.8rem" }} />
+              <Icon icon={item.icon} className="text-[#0B43FD] shrink-0 hidden sm:block" style={{ fontSize: "1.8rem" }} />
             </motion.div>
           ))}
         </motion.div>
@@ -178,14 +178,14 @@ export default function TaqseetClient() {
           whileInView="show"
           viewport={viewport}
         >
-          <motion.div className="flex items-center gap-4 mb-10" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
+          <motion.div className="flex items-center gap-4 mb-8 sm:mb-10" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-[#0a0a0a] font-black text-base sm:text-xl lg:text-2xl whitespace-nowrap">لماذا تختار التقسيط معنا؟</span>
+            <span className="text-[#0a0a0a] font-black text-sm sm:text-xl lg:text-2xl whitespace-nowrap">لماذا تختار التقسيط معنا؟</span>
             <div className="flex-1 h-px bg-gray-200" />
           </motion.div>
 
           <motion.div
-            className="grid grid-cols-2 sm:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5"
             variants={stagger(0.12)}
             initial="hidden"
             whileInView="show"
@@ -195,15 +195,21 @@ export default function TaqseetClient() {
               <motion.div
                 key={i}
                 variants={fadeUp}
-                whileHover={{ y: -5 }}
+                whileHover={{ y: -4, boxShadow: "0 8px 28px rgba(11,67,253,0.10)" }}
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                className="flex flex-col items-center text-center gap-3 cursor-default"
+                className="flex flex-row sm:flex-col items-center sm:items-center gap-4 sm:gap-3 bg-[#f8f9ff] border border-[#0B43FD]/10 rounded-2xl px-4 py-4 sm:px-5 sm:py-6 sm:text-center cursor-default"
               >
-                <motion.div whileHover={{ rotate: 15, scale: 1.15 }} transition={{ type: "spring", stiffness: 300, damping: 15 }}>
-                  <Icon icon={item.icon} className="text-[#0B43FD]" style={{ fontSize: "2.5rem" }} />
+                <motion.div
+                  className="w-11 h-11 shrink-0 rounded-xl bg-[#0B43FD]/10 flex items-center justify-center"
+                  whileHover={{ rotate: 12, scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                >
+                  <Icon icon={item.icon} className="text-[#0B43FD]" style={{ fontSize: "1.4rem" }} />
                 </motion.div>
-                <span className="text-[#0a0a0a] font-bold text-xs sm:text-sm lg:text-base">{item.title}</span>
-                <span className="text-[#777] text-xs sm:text-sm leading-relaxed max-w-[120px]" dangerouslySetInnerHTML={{ __html: item.desc }} />
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-[#0a0a0a] font-bold text-sm sm:text-sm lg:text-base">{item.title}</span>
+                  <span className="text-[#777] text-xs leading-relaxed" dangerouslySetInnerHTML={{ __html: item.desc }} />
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -222,11 +228,11 @@ export default function TaqseetClient() {
           <div className="absolute top-0 left-0 w-72 h-72 bg-[#0B43FD]/5 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
           <div className="absolute bottom-0 right-0 w-56 h-56 bg-[#0B43FD]/5 rounded-full translate-x-1/3 translate-y-1/3 pointer-events-none" />
 
-          <motion.div className="flex items-center gap-4 mb-8 relative" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
+          <motion.div className="flex items-center gap-4 mb-6 sm:mb-8 relative" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
             <div className="flex-1 h-px bg-gray-200" />
             <div className="flex flex-col items-center gap-1">
-              <span className="text-[#0a0a0a] font-black text-base sm:text-xl lg:text-2xl whitespace-nowrap">كيف يعمل التقسيط؟</span>
-              <span className="text-[#0B43FD] text-xs sm:text-sm font-medium">4 خطوات بسيطة وتنتهي</span>
+              <span className="text-[#0a0a0a] font-black text-sm sm:text-xl lg:text-2xl whitespace-nowrap">كيف يعمل التقسيط؟</span>
+              <span className="text-[#0B43FD] text-[10px] sm:text-sm font-medium">4 خطوات بسيطة وتنتهي</span>
             </div>
             <div className="flex-1 h-px bg-gray-200" />
           </motion.div>
@@ -257,8 +263,8 @@ export default function TaqseetClient() {
                 </motion.div>
                 <div className="flex flex-col gap-1 text-right sm:text-center sm:items-center">
                   <span className="bg-[#0B43FD]/10 text-[#0B43FD] text-[10px] font-bold px-2 py-0.5 rounded-full w-fit">الخطوة {item.step}</span>
-                  <span className="text-[#0a0a0a] font-black text-sm sm:text-sm lg:text-base leading-snug">{item.title}</span>
-                  <span className="text-[#777] text-xs leading-relaxed">{item.desc}</span>
+                  <span className="text-[#0a0a0a] font-black text-xs sm:text-sm lg:text-base leading-snug">{item.title}</span>
+                  <span className="text-[#777] text-[10px] sm:text-xs leading-relaxed">{item.desc}</span>
                 </div>
               </motion.div>
             ))}
@@ -275,9 +281,9 @@ export default function TaqseetClient() {
           whileInView="show"
           viewport={viewport}
         >
-          <motion.div className="flex items-center gap-4 mb-12" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
+          <motion.div className="flex items-center gap-4 mb-8 sm:mb-12" variants={fadeIn} initial="hidden" whileInView="show" viewport={viewport}>
             <div className="flex-1 h-px bg-gray-200" />
-            <span className="text-[#0a0a0a] font-black text-base sm:text-xl lg:text-2xl whitespace-nowrap">احسب قسطك الشهري</span>
+            <span className="text-[#0a0a0a] font-black text-sm sm:text-xl lg:text-2xl whitespace-nowrap">احسب قسطك الشهري</span>
             <div className="flex-1 h-px bg-gray-200" />
           </motion.div>
 
@@ -291,7 +297,7 @@ export default function TaqseetClient() {
               whileInView="show"
               viewport={viewport}
             >
-              <div className="relative w-[240px] h-[130px]">
+              <div className="relative w-[180px] h-[100px] sm:w-[240px] sm:h-[130px]">
                 <svg viewBox="0 0 240 130" fill="none" className="w-full h-full">
                   <defs>
                     <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -316,7 +322,7 @@ export default function TaqseetClient() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-end pb-1">
                   <motion.span
-                    className="text-[#0B43FD] font-black text-[2rem] sm:text-[2.8rem] lg:text-[3.5rem] leading-none"
+                    className="text-[#0B43FD] font-black text-[1.5rem] sm:text-[2.8rem] lg:text-[3.5rem] leading-none"
                     initial={{ opacity: 0, scale: 0.5 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={viewport}
@@ -324,11 +330,11 @@ export default function TaqseetClient() {
                   >
                     24
                   </motion.span>
-                  <span className="text-[#888] text-sm font-medium mt-0.5">شهر</span>
+                  <span className="text-[#888] text-xs sm:text-sm font-medium mt-0.5">شهر</span>
                 </div>
               </div>
               <motion.span
-                className="text-[#0B43FD] text-sm font-bold mt-4 bg-[#0B43FD]/8 px-4 py-1.5 rounded-full"
+                className="text-[#0B43FD] text-xs sm:text-sm font-bold mt-3 sm:mt-4 bg-[#0B43FD]/8 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full"
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={viewport}
@@ -354,8 +360,8 @@ export default function TaqseetClient() {
                 { label: "المتبقي", value: "4,999 ريال" },
               ].map((row, i) => (
                 <motion.div key={i} variants={slideLeft} className="flex items-center justify-between py-4">
-                  <span className="text-[#0a0a0a] font-black text-sm sm:text-base lg:text-lg">{row.value}</span>
-                  <span className="text-[#888] text-xs sm:text-sm">{row.label}</span>
+                  <span className="text-[#0a0a0a] font-black text-xs sm:text-base lg:text-lg">{row.value}</span>
+                  <span className="text-[#888] text-[10px] sm:text-sm">{row.label}</span>
                 </motion.div>
               ))}
 
@@ -367,11 +373,11 @@ export default function TaqseetClient() {
                 >
                   <Icon icon="solar:calculator-linear" className="text-[#0B43FD]" style={{ fontSize: "1.4rem" }} />
                   <div className="flex flex-col">
-                    <span className="text-[#0B43FD] font-black text-[1.1rem] sm:text-[1.3rem] lg:text-[1.6rem] leading-none">208 ريال</span>
-                    <span className="text-[#0B43FD]/60 text-[10px] sm:text-xs">القسط الشهري</span>
+                    <span className="text-[#0B43FD] font-black text-[0.9rem] sm:text-[1.3rem] lg:text-[1.6rem] leading-none">208 ريال</span>
+                    <span className="text-[#0B43FD]/60 text-[9px] sm:text-xs">القسط الشهري</span>
                   </div>
                 </motion.div>
-                <span className="text-[#bbb] text-sm">/شهر × 24</span>
+                <span className="text-[#bbb] text-xs sm:text-sm">/شهر × 24</span>
               </motion.div>
             </motion.div>
           </div>

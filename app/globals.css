@@ -23,11 +23,11 @@ html, body {
 body {
   background: #ffffff;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Almarai', sans-serif;
 }
 
 body.checkout-page {
-  font-family: Arial, Helvetica, sans-serif !important;
+  font-family: 'Almarai', sans-serif !important;
 }
 
 body.print-page,
@@ -139,6 +139,12 @@ body.checkout-page {
   to   { opacity: 1; transform: translateY(0); }
 }
 .animate-fade-in-down { animation: fade-in-down 0.3s ease; }
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.5s ease both; }
 
 /* Category Slider Gradient Animation */
 @keyframes gradient {

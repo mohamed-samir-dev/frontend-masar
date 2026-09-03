@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { RiCoupon2Line, RiFileCopyLine, RiCheckLine, RiCloseLine } from "react-icons/ri";
+import { RiCoupon2Line, RiFileCopyLine, RiCheckLine } from "react-icons/ri";
 import { useCartStore } from "../../store/cartStore";
 
 function generateCode(): string {
@@ -17,70 +17,73 @@ function generateCode(): string {
 
 export default function DiscountBanner() {
   const { setPendingDiscountCode } = useCartStore();
-  const [visible, setVisible] = useState(true);
-  const [code] = useState(generateCode);
+  const [open, setOpen]   = useState(false);
+  const [code]            = useState(generateCode);
   const [copied, setCopied] = useState(false);
 
   async function copyCode() {
     await navigator.clipboard.writeText(code);
     setPendingDiscountCode(code);
     setCopied(true);
-    setTimeout(() => setVisible(false), 900);
+    setTimeout(() => setOpen(false), 900);
   }
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          dir="rtl"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.97 }}
-          transition={{ duration: 0.25 }}
-          className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+    <div>
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="w-full flex items-center justify-between gap-3 bg-[#F7F9FC] border border-[#E8EDF5] hover:border-[#0874ED]/40 rounded-2xl px-5 py-3.5 transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-[#0874ED]/10 rounded-xl flex items-center justify-center shrink-0">
+            <RiCoupon2Line size={17} className="text-[#0874ED]" />
+          </div>
+          <div className="text-right">
+            <p className="text-sm font-semibold text-[#040D2A]">لديك كوبون خصم؟ 🎉</p>
+            <p className="text-xs text-[#8A96A8]">اضغط لعرض كودك ووفّر <span className="text-[#0874ED] font-semibold">100 ريال</span></p>
+          </div>
+        </div>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="text-[#0874ED] text-base"
         >
-          <div className="h-1 w-full bg-gradient-to-l from-[#1a6b7d] to-[#2a9db5]" />
-          <div className="px-5 py-4 flex flex-col gap-3">
+          ↓
+        </motion.span>
+      </button>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-[#1a6b7d]/10 rounded-lg flex items-center justify-center shrink-0">
-                  <RiCoupon2Line size={17} className="text-[#1a6b7d]" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-gray-800">لديك كود خصم 🎉</p>
-                  <p className="text-xs text-gray-400">
-                    وفّر <span className="text-[#1a6b7d] font-bold">100 ر.س</span> — استخدمه عند الدفع
-                  </p>
-                </div>
-              </div>
-              <button onClick={() => setVisible(false)} className="text-gray-300 hover:text-gray-500 transition-colors">
-                <RiCloseLine size={20} />
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.18 }}
+            className="mt-2 bg-[#FEFEFE] border border-[#E8EDF5] rounded-2xl overflow-hidden"
+          >
+            <div className="h-0.5 w-full bg-[#0874ED]" />
+            <div className="px-5 py-4 space-y-3">
+              <p className="text-xs text-[#8A96A8] text-center">انسخ الكود واستخدمه عند الدفع</p>
+              <button
+                onClick={copyCode}
+                className={`w-full flex items-center justify-between gap-3 border-2 border-dashed rounded-xl px-4 py-3 transition-all ${
+                  copied ? "bg-emerald-50 border-emerald-300" : "bg-[#F7F9FC] border-[#E8EDF5] hover:border-[#0874ED]/40"
+                }`}
+              >
+                <span className={`font-mono font-black text-lg tracking-widest select-all ${copied ? "text-emerald-600" : "text-[#040D2A]"}`}>
+                  {code}
+                </span>
+                <span className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0 transition-all ${
+                  copied ? "bg-emerald-500 text-white" : "bg-[#0874ED] text-white hover:bg-[#0665D0]"
+                }`}>
+                  {copied ? <RiCheckLine size={13} /> : <RiFileCopyLine size={13} />}
+                  {copied ? "تم النسخ ✓" : "نسخ"}
+                </span>
               </button>
             </div>
-
-            <button
-              onClick={copyCode}
-              className={`w-full flex items-center justify-between gap-3 border-2 border-dashed rounded-xl px-4 py-3 transition-all group ${
-                copied
-                  ? "bg-green-50 border-green-300"
-                  : "bg-[#f4fbfc] border-[#1a6b7d]/25 hover:border-[#1a6b7d]/50"
-              }`}
-            >
-              <span className={`font-mono font-black text-xl tracking-widest select-all ${copied ? "text-green-600" : "text-[#1a6b7d]"}`}>
-                {code}
-              </span>
-              <span className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all shrink-0 ${
-                copied ? "bg-green-500 text-white" : "bg-[#1a6b7d] text-white group-hover:bg-[#155e6f]"
-              }`}>
-                {copied ? <RiCheckLine size={14} /> : <RiFileCopyLine size={14} />}
-                {copied ? "تم النسخ ✓" : "نسخ الكود"}
-              </span>
-            </button>
-
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

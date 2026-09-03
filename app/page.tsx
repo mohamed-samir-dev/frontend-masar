@@ -2,6 +2,8 @@ import { ProductGrid } from "./components/products";
 import CustomerReviews from "./components/CustomerReviews";
 import HeroSection from "./components/HeroSection";
 import ShopByModel from "./components/ShopByModel";
+import AnimatedSection from "./components/AnimatedSection";
+import HomeBackground from "./components/HomeBackground";
 import { getCachedProducts } from "./lib/products-cache";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +33,15 @@ async function getHomeConfig() {
   }
 }
 
+async function getBanners() {
+  try {
+    const r = await fetch(`${BACKEND}/api/admin/banners`, { cache: "no-store" });
+    return r.ok ? r.json() : [];
+  } catch {
+    return [];
+  }
+}
+
 async function getBannerMap(categories: string[]) {
   if (!categories.length) return {};
   try {
@@ -45,10 +56,11 @@ async function getBannerMap(categories: string[]) {
 }
 
 export default async function Home() {
-  const [c, products, homeConfig] = await Promise.all([
+  const [c, products, homeConfig, heroBanners] = await Promise.all([
     getCompany(),
     getCachedProducts(),
     getHomeConfig(),
+    getBanners(),
   ]);
   const categories = [...new Set((products as { category?: string }[]).map((p) => p.category).filter(Boolean))] as string[];
   const bannerMap = await getBannerMap(categories);
@@ -114,11 +126,18 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
-      <main className="min-h-screen" style={{ background: "radial-gradient(ellipse at 70% 0%, #e8eeff 0%, #f4f6ff 35%, #f9fafb 70%, #ffffff 100%)" }}>
-        <HeroSection />
-        <ShopByModel />
-        <ProductGrid products={products} homeConfig={homeConfig} bannerMap={bannerMap} />
-        <CustomerReviews />
+      <main className="min-h-screen">
+        <HomeBackground />
+        <HeroSection banners={heroBanners} />
+        <AnimatedSection delay={0.1}>
+          <ShopByModel />
+        </AnimatedSection>
+        <AnimatedSection delay={0.1}>
+          <ProductGrid products={products} homeConfig={homeConfig} bannerMap={bannerMap} />
+        </AnimatedSection>
+        <AnimatedSection delay={0.1}>
+          <CustomerReviews />
+        </AnimatedSection>
       </main>
     </>
   );
