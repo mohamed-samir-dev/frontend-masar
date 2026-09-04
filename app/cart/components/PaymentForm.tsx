@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { CreditCard, ChevronDown, Calendar, Wallet, CheckCircle2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import type { CustomerInfo } from "../../store/cartStore";
 import { useCartStore } from "../../store/cartStore";
 
@@ -193,12 +194,12 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                         </div>
                         <CheckCircle2 size={18} className="text-[#0874ED] shrink-0" />
                       </div>
-                      <a
-                        href="http://localhost:3000/taqseet"
+                      <Link
+                        href="/taqseet"
                         className="w-full text-center py-2 bg-[#0874ED] hover:bg-[#0665D0] text-white text-xs font-bold rounded-xl transition-all active:scale-95"
                       >
                         خطط التقسيط
-                      </a>
+                      </Link>
                     </div>
                   </div>
 
