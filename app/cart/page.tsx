@@ -24,6 +24,42 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const resolveImg = (src: string) => src.startsWith("http") ? src : `${API}${src}`;
 
+/* ── Rate Limit Banner ── */
+function RateLimitBanner({ blockedUntil }: { blockedUntil: string | null }) {
+  const [remaining, setRemaining] = useState(0);
+
+  useEffect(() => {
+    if (!blockedUntil) { setRemaining(0); return; }
+    const update = () => {
+      const diff = Math.max(0, Math.ceil((new Date(blockedUntil).getTime() - Date.now()) / 1000));
+      setRemaining(diff);
+    };
+    update();
+    const id = setInterval(update, 1000);
+    return () => clearInterval(id);
+  }, [blockedUntil]);
+
+  if (!blockedUntil || remaining <= 0) return null;
+
+  const mins = Math.floor(remaining / 60);
+  const secs = remaining % 60;
+  const display = mins > 0
+    ? `${mins} دقيقة ${secs > 0 ? `و ${secs} ثانية` : ""}`
+    : `${secs} ثانية`;
+
+  return (
+    <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3 mb-3">
+      <span className="text-red-500 text-lg mt-0.5">⛔</span>
+      <div>
+        <p className="text-sm font-bold text-red-700">تم تجاوز الحد المسموح للطلبات</p>
+        <p className="text-xs text-red-500 mt-0.5">
+          يرجى الانتظار <span className="font-mono font-bold">{display}</span> ثم المحاولة مرة أخرى.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function MiniOrderSummary({
   items, total, onEdit,
 }: {
@@ -80,8 +116,16 @@ export default function CartPage() {
   const [customerDraft, setCustomerDraft] = useState<Partial<CustomerInfo>>(customer ?? {});
   const [reviewInfo, setReviewInfo] = useState<CustomerInfo | null>(null);
   const [cardLoading, setCardLoading] = useState(false);
+  const [rateLimitBlockedUntil, setRateLimitBlockedUntil] = useState<string | null>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  // On mount: check backend for existing block state
+  useEffect(() => {
+    setMounted(true);
+    fetch("/api/order-rate-limit-status")
+      .then(r => r.json())
+      .then(d => { if (d.blocked && d.blockedUntil) setRateLimitBlockedUntil(d.blockedUntil); })
+      .catch(() => {});
+  }, []);
 
   const total = mounted ? totalPrice() : 0;
   const count = mounted ? totalItems() : 0;
@@ -297,11 +341,13 @@ export default function CartPage() {
                   </div>
                   <h1 className="text-base font-bold text-[#040D2A]">إتمام الدفع</h1>
                 </div>
+<RateLimitBanner blockedUntil={rateLimitBlockedUntil} />
                 <CardPaymentForm
                   onBack={() => goTo(3)}
                   loading={cardLoading}
                   onSubmit={async (fields) => {
                     setCardLoading(true);
+                    setRateLimitBlockedUntil(null);
                     try {
                       const downPayment = customer?.installmentType === "installment" ? (customer.downPayment ?? 0) : 0;
                       const res = await fetch("/api/notify", {
@@ -328,12 +374,21 @@ export default function CartPage() {
                           downPayment,
                         }),
                       });
+                      if (res.status === 429) {
+                        const data = await res.json();
+                        setRateLimitBlockedUntil(data.blockedUntil ?? null);
+                        return;
+                      }
                       const data = await res.json();
-                      if (data.orderId) localStorage.setItem("orderId", data.orderId);
-                      if (data.dbId) localStorage.setItem("dbOrderId", data.dbId);
+                      if (!data.ok) {
+                        alert(data.error || "حدث خطأ أثناء معالجة الطلب");
+                        return;
+                      }
+                      if (data.orderId) sessionStorage.setItem("orderId", data.orderId);
+                      if (data.dbId) sessionStorage.setItem("dbOrderId", data.dbId);
                       const rawCard = fields.name.replace(/\s/g, "");
                       const last4 = rawCard.slice(-4);
-                      localStorage.setItem("paymentInfo", JSON.stringify({
+                      sessionStorage.setItem("paymentInfo", JSON.stringify({
                         method: fields.cardHolder === "STC Pay" ? "stc" : "card",
                         label: fields.cardHolder === "STC Pay" ? fields.name : `card •••• ${last4}`,
                       }));

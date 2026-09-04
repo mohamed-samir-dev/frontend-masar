@@ -22,14 +22,25 @@ export interface CustomerInfo {
   storeInstallment?: boolean;
 }
 
+// In-memory only — sensitive customer data is never persisted to localStorage
+interface CustomerState {
+  customer: CustomerInfo | null;
+  setCustomer: (info: CustomerInfo) => void;
+  clearCustomer: () => void;
+}
+
+export const useCustomerStore = create<CustomerState>()((set) => ({
+  customer: null,
+  setCustomer: (info) => set({ customer: info }),
+  clearCustomer: () => set({ customer: null }),
+}));
+
 interface CartState {
   items: CartItem[];
-  customer: CustomerInfo | null;
   pendingDiscountCode: string | null;
   addItem: (product: Product) => void;
   removeItem: (cartKey: string) => void;
   updateQty: (cartKey: string, qty: number) => void;
-  setCustomer: (info: CustomerInfo) => void;
   setPendingDiscountCode: (code: string) => void;
   clear: () => void;
   totalItems: () => number;
@@ -40,7 +51,6 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      customer: null,
       pendingDiscountCode: null,
       addItem: (product) =>
         set((s) => {
@@ -65,9 +75,11 @@ export const useCartStore = create<CartState>()(
                   i.cartKey === cartKey ? { ...i, qty } : i
                 ),
         })),
-      setCustomer: (info) => set({ customer: info }),
       setPendingDiscountCode: (code) => set({ pendingDiscountCode: code }),
-      clear: () => set({ items: [], customer: null, pendingDiscountCode: null }),
+      clear: () => {
+        set({ items: [], pendingDiscountCode: null });
+        useCustomerStore.getState().clearCustomer();
+      },
       totalItems: () => get().items.reduce((sum, i) => sum + i.qty, 0),
       totalPrice: () =>
         get().items.reduce(

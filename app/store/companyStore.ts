@@ -44,7 +44,7 @@ export const useCompanyStore = create<CompanyStore>((set) => ({
         website: data.website || "",
         details: data.details || "",
       });
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   },
   // keep fetchLogo as alias for backward compat
   setLogo: (url) => set({ logo: url }),
