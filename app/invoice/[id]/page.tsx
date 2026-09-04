@@ -17,9 +17,16 @@ export default function PrintOrderPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`/api/admin/orders/${id}`).then((r) => r.json()),
-      fetch("/api/admin/company").then((r) => r.json()).catch(() => ({})),
+      fetch(`/api/admin/orders/${id}`, { credentials: "include" }).then(async (r) => {
+        if (r.status === 401 || r.status === 403) {
+          window.location.href = "/admin/login";
+          return null;
+        }
+        return r.json();
+      }),
+      fetch("/api/admin/company", { credentials: "include" }).then((r) => r.json()).catch(() => ({})),
     ]).then(([o, c]) => {
+      if (!o) return;
       setOrder(o);
       setCompany(c);
     });

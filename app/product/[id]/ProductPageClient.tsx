@@ -38,12 +38,14 @@ export default function ProductPageClient({
   });
 
   const [selectedStorage, setSelectedStorage] = useState<string>(() => {
+    const firstVariantStorage = product?.variants?.[0];
     if (initialStorage) {
-      const variant = product?.variants?.find((v) => v.color === selectedColor);
-      const exists = variant?.storageOptions?.some((s) => s.storage === initialStorage);
-      return exists ? initialStorage : (firstVariant?.storageOptions?.[0]?.storage ?? product?.storage ?? "");
+      const exists = firstVariantStorage?.storageOptions?.some((s) => s.storage === initialStorage);
+      return exists ? initialStorage : (firstVariantStorage?.storageOptions?.find(o => o.storage === firstVariantStorage?.defaultStorage)?.storage ?? firstVariantStorage?.storageOptions?.[0]?.storage ?? product?.storage ?? "");
     }
-    return firstVariant?.storageOptions?.[0]?.storage ?? product?.storage ?? "";
+    const defStorage = firstVariantStorage?.defaultStorage;
+    if (defStorage && firstVariantStorage?.storageOptions?.some(o => o.storage === defStorage)) return defStorage;
+    return firstVariantStorage?.storageOptions?.[0]?.storage ?? product?.storage ?? "";
   });
 
   if (!product)
@@ -54,7 +56,8 @@ export default function ProductPageClient({
     );
 
   const activeVariant = product.variants?.find((v) => v.color === selectedColor);
-  const activeStorage = activeVariant?.storageOptions?.find((s) => s.storage === selectedStorage);
+  const baseStorageOptions = product.variants?.[0]?.storageOptions ?? [];
+  const activeStorage = baseStorageOptions.find((s) => s.storage === selectedStorage);
 
   const resolveImg = (src: string) => src.startsWith("http") ? src : `${API}${src}`;
 

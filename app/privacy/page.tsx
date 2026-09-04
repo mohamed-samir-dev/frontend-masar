@@ -18,12 +18,12 @@ function useInView(threshold = 0.1) {
   return { ref, visible };
 }
 
-function FadeUp({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
+function FadeUp({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const { ref, visible } = useInView();
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className={className} style={{
       opacity: visible ? 1 : 0,
-      transform: visible ? "translateY(0)" : "translateY(30px)",
+      transform: visible ? "translateY(0) scale(1)" : "translateY(32px) scale(0.97)",
       transition: `opacity 0.7s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.7s cubic-bezier(.22,1,.36,1) ${delay}ms`,
     }}>
       {children}
@@ -31,9 +31,13 @@ function FadeUp({ children, delay = 0 }: { children: ReactNode; delay?: number }
   );
 }
 
-/* ── Icons ── */
+const IconArrowDown = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth={2}>
+    <path d="M12 5v14M5 12l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 const IconLockShield = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
+  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
     <path d="M9 12l2 2 4-4" />
   </svg>
@@ -74,51 +78,37 @@ const IconCheck = () => (
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
-const IconEye = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="w-7 h-7" stroke="currentColor" strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    <circle cx="12" cy="12" r="3" />
-  </svg>
-);
 
 const policies = [
   {
     Icon: IconDoc,
     num: "01",
     title: "استخدام الموقع",
-    desc: "باستخدامك لهذا الموقع فإنك توافق على الالتزام بالشروط والأحكام والسياسات المعمول بها داخل مؤسسة البلاد الحديثة للإلكترونيات.",
-    accent: "#1F7A8C",
-    lightBg: "rgba(31,122,140,0.08)",
+    desc: "باستخدامك لموقع مسار الهاتف المعتمد فإنك توافق على الالتزام بالشروط والأحكام المعمول بها — نسعى دائمًا لتقديم تجربة تسوق شفافة وموثوقة.",
   },
   {
     Icon: IconShield,
     num: "02",
     title: "الخصوصية وحماية البيانات",
-    desc: "نلتزم بالحفاظ على خصوصية بيانات العملاء وعدم استخدامها إلا في حدود معالجة الطلبات وتحسين الخدمة والتواصل عند الحاجة.",
-    accent: "#155E6F",
-    lightBg: "rgba(21,94,111,0.08)",
+    desc: "بياناتك ملكك وحدك. نلتزم بالحفاظ على خصوصيتك الكاملة ولا نستخدم معلوماتك إلا في حدود معالجة طلبك وتحسين تجربتك معنا.",
   },
   {
     Icon: IconInfo,
     num: "03",
     title: "دقة المعلومات",
-    desc: "نحرص على عرض المعلومات والمنتجات والأسعار بأكبر قدر ممكن من الدقة، ومع ذلك قد تحدث تحديثات أو تعديلات دون إشعار مسبق.",
-    accent: "#0F4C6E",
-    lightBg: "rgba(15,76,110,0.08)",
+    desc: "نحرص على عرض المنتجات والأسعار والمواصفات بأعلى درجات الدقة. في حال حدوث أي تحديث أو تعديل، نسعى للإشعار المسبق قدر الإمكان.",
   },
   {
     Icon: IconChat,
     num: "04",
     title: "الطلبات والتواصل",
-    desc: "يحق للمتجر مراجعة أو تأكيد الطلبات والتواصل مع العميل عند الحاجة لإتمام البيانات أو تأكيد تفاصيل الشحن والدفع.",
-    accent: "#1F7A8C",
-    lightBg: "rgba(31,122,140,0.08)",
+    desc: "قد يتواصل فريق مسار معك لتأكيد تفاصيل طلبك أو بيانات الشحن — هدفنا الوحيد هو ضمان وصول طلبك بشكل صحيح وفي الوقت المناسب.",
   },
 ];
 
 const commitments = [
   "لا نشارك بياناتك الشخصية مع أي طرف ثالث",
-  "نستخدم تشفير آمن لحماية معلومات الدفع",
+  "نستخدم تشفيرًا آمنًا لحماية معلومات الدفع",
   "يمكنك طلب حذف بياناتك في أي وقت",
   "نحتفظ بالبيانات فقط للمدة اللازمة لإتمام الخدمة",
 ];
@@ -134,85 +124,86 @@ export default function PrivacyPage() {
     fetch("/api/admin/company").then(r => r.json()).then(setCompany).catch(() => {});
   }, []);
 
-  const anim = (delay: number): React.CSSProperties => ({
-    opacity: heroVis ? 1 : 0,
-    transform: heroVis ? "translateY(0)" : "translateY(24px)",
-    transition: `opacity 0.7s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.7s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+  const anim = (delay: number) => ({
+    style: {
+      opacity: heroVis ? 1 : 0,
+      transform: heroVis ? "translateY(0)" : "translateY(30px)",
+      transition: `opacity 0.8s cubic-bezier(.22,1,.36,1) ${delay}ms, transform 0.8s cubic-bezier(.22,1,.36,1) ${delay}ms`,
+    },
   });
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#f0f7fb] to-[#e4eff6] overflow-x-hidden" dir="rtl">
+    <main className="min-h-screen overflow-x-hidden" dir="rtl" style={{ background: "#f8faff" }}>
 
       {/* ════════ HERO ════════ */}
-      <section className="relative w-full overflow-hidden">
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0a3550 0%, #0F4C6E 35%, #1F7A8C 70%, #155E6F 100%)" }} />
+      <section
+        className="relative w-full overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #0B43FD 0%, #1a6bff 35%, #3d8bff 65%, #0B43FD 100%)" }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
+        />
 
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-20 -right-20 w-[420px] h-[420px] rounded-full" style={{ background: "radial-gradient(circle, rgba(109,190,0,0.12) 0%, transparent 70%)" }} />
-          <div className="absolute top-1/2 -left-32 w-[350px] h-[350px] rounded-full" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)" }} />
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[200px]" style={{ background: "radial-gradient(ellipse, rgba(31,122,140,0.3) 0%, transparent 70%)" }} />
-        </div>
-
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "32px 32px" }} />
-
-        <div className="relative w-full px-5 sm:px-12 lg:px-20 pt-24 pb-28 sm:pt-32 sm:pb-36 text-center text-white">
-          <div style={anim(100)} className="inline-flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-2 text-xs sm:text-sm font-semibold text-blue-100 mb-7">
-            <IconLockShield />
-            <span>بياناتك في أمان</span>
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-20 text-center text-white">
+          <div {...anim(100)}>
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-blue-100 mb-5 tracking-wide">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-200 animate-pulse" />
+              <IconLockShield />
+              <span>بياناتك في أمان تام</span>
+            </div>
           </div>
 
-          <h1 style={anim(220)} className="text-3xl sm:text-5xl lg:text-[3.5rem] font-black mb-5 leading-[1.2] tracking-tight">
-            سياسة الخصوصية
-            <br />
-            <span className="bg-gradient-to-l from-[#6DBE00] via-[#8fd43a] to-[#6DBE00] bg-clip-text text-transparent">
-              واتفاقية الاستخدام
-            </span>
-          </h1>
+          <div {...anim(250)}>
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-tight mb-4">
+              خصوصيتك أولويتنا.
+              <br />
+              <span className="text-blue-200">وثقتك مسؤوليتنا.</span>
+            </h1>
+          </div>
 
-          <p style={anim(360)} className="text-white/70 text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-            نحرص على حماية خصوصيتك — تعرّف على الشروط العامة المنظمة لاستخدام الموقع وحماية بياناتك
-          </p>
+          <div {...anim(400)}>
+            <p className="text-blue-100/80 text-sm sm:text-base lg:text-lg max-w-xl mx-auto leading-relaxed mb-7">
+              في مسار نؤمن أن الشفافية أساس الثقة — تعرّف على سياسة الخصوصية والشروط المنظمة لاستخدام الموقع وحماية بياناتك
+            </p>
+          </div>
 
-          <div style={anim(500)} className="mt-10 flex justify-center">
-            <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-1.5">
-              <div className="w-1.5 h-3 rounded-full bg-white/50 animate-bounce" />
+          <div {...anim(550)}>
+            <div className="flex justify-center text-white/30 animate-bounce" style={{ animationDuration: "2s" }}>
+              <IconArrowDown />
             </div>
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 w-full">
-          <svg viewBox="0 0 1440 80" className="w-full h-14 sm:h-20" preserveAspectRatio="none">
-            <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,50 1440,40 L1440,80 L0,80 Z" fill="#f0f7fb" />
+          <svg viewBox="0 0 1440 60" className="w-full h-10 sm:h-14" preserveAspectRatio="none">
+            <path d="M0,30 C480,60 960,0 1440,30 L1440,60 L0,60 Z" fill="#f8faff" />
           </svg>
         </div>
       </section>
 
       {/* ════════ POLICY CARDS ════════ */}
-      <section className="w-full max-w-5xl mx-auto px-4 sm:px-8 -mt-4 sm:-mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+      <section className="w-full max-w-5xl mx-auto px-3 sm:px-8 lg:px-10 mt-8 sm:mt-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5">
           {policies.map((p, i) => (
             <FadeUp key={p.title} delay={i * 100}>
-              <div className="group relative bg-white rounded-2xl sm:rounded-3xl border border-gray-100/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-400 overflow-hidden">
-                <div className="h-1 w-full" style={{ background: `linear-gradient(to left, ${p.accent}, ${p.accent}88)` }} />
-                <div className="p-5 sm:p-7">
-                  <div className="flex items-start gap-4 mb-4">
-                    <div
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300"
-                      style={{ background: p.lightBg, color: p.accent }}
-                    >
+              <div className="group bg-white/80 backdrop-blur-sm rounded-2xl border border-white shadow-lg shadow-[#0F4C6E]/[0.04] overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-400">
+                <div className="h-1 w-full bg-gradient-to-l from-[#0B43FD] to-[#3d8bff]" />
+                <div className="p-4 sm:p-7">
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#0B43FD]/8 flex items-center justify-center shrink-0 text-[#0B43FD] group-hover:scale-110 transition-transform duration-300">
                       <p.Icon />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] sm:text-xs font-black tracking-widest" style={{ color: p.accent, opacity: 0.5 }}>{p.num}</span>
-                      <h3 className="text-base sm:text-lg font-extrabold text-gray-800 leading-snug">{p.title}</h3>
+                      <span className="text-[10px] font-black tracking-widest text-[#0B43FD]/40">{p.num}</span>
+                      <h3 className="text-sm sm:text-lg font-extrabold text-gray-800 leading-snug">{p.title}</h3>
                     </div>
                   </div>
-                  <p className="text-gray-500 text-sm sm:text-[15px] leading-relaxed pr-0 sm:pr-[4.5rem]">{p.desc}</p>
+                  <p className="text-gray-500 text-xs sm:text-[15px] leading-relaxed">{p.desc}</p>
                 </div>
-                <div
-                  className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-3xl pointer-events-none"
-                  style={{ background: p.accent }}
-                />
               </div>
             </FadeUp>
           ))}
@@ -220,35 +211,25 @@ export default function PrivacyPage() {
       </section>
 
       {/* ════════ COMMITMENTS ════════ */}
-      <section className="w-full max-w-5xl mx-auto px-4 sm:px-8 mt-12 sm:mt-16">
+      <section className="w-full max-w-5xl mx-auto px-3 sm:px-8 lg:px-10 pt-8 sm:pt-14">
         <FadeUp>
-          <div className="relative bg-gradient-to-br from-[#0F4C6E] to-[#1F7A8C] rounded-2xl sm:rounded-3xl p-6 sm:p-10 overflow-hidden">
-            <div className="pointer-events-none absolute top-0 right-0 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(109,190,0,0.15) 0%, transparent 70%)" }} />
-            <div className="pointer-events-none absolute bottom-0 left-0 w-48 h-48 rounded-full" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%)" }} />
-
-            <div className="relative">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-[#6DBE00]">
-                  <IconEye />
-                </div>
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-extrabold text-white">التزاماتنا تجاه خصوصيتك</h2>
-                  <div className="h-0.5 w-10 mt-1.5 rounded-full bg-[#6DBE00]" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {commitments.map((item, i) => (
-                  <FadeUp key={i} delay={i * 100}>
-                    <div className="flex items-start gap-3 bg-white/8 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-white/10 hover:bg-white/12 transition-colors duration-300">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#6DBE00] flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#6DBE00]/30">
-                        <IconCheck />
-                      </div>
-                      <p className="text-white/90 text-sm sm:text-[15px] leading-relaxed font-medium pt-1">{item}</p>
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl border border-white shadow-lg shadow-[#0F4C6E]/[0.06] p-4 sm:p-8 lg:p-10 overflow-hidden">
+            <div className="pointer-events-none absolute -top-20 -left-20 w-60 h-60 rounded-full bg-[#0B43FD]/5 blur-[60px]" />
+            <h3 className="text-[#0B43FD] font-extrabold text-base sm:text-xl lg:text-2xl mb-4 sm:mb-6 relative">
+              التزاماتنا تجاه خصوصيتك
+              <span className="block h-1 w-12 mt-2 rounded-full bg-[#0B43FD]" />
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 relative">
+              {commitments.map((item, i) => (
+                <FadeUp key={i} delay={i * 60}>
+                  <div className="flex items-center gap-3 bg-[#0B43FD]/5 rounded-xl px-3 sm:px-4 py-3 border border-[#0B43FD]/15">
+                    <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 text-[#0B43FD]">
+                      <IconCheck />
                     </div>
-                  </FadeUp>
-                ))}
-              </div>
+                    <span className="text-gray-700 text-xs sm:text-sm font-medium leading-relaxed">{item}</span>
+                  </div>
+                </FadeUp>
+              ))}
             </div>
           </div>
         </FadeUp>
@@ -256,21 +237,21 @@ export default function PrivacyPage() {
 
       {/* ════════ STORE INFO ════════ */}
       {company && (
-        <section className="w-full max-w-5xl mx-auto px-4 sm:px-8 mt-10 sm:mt-14">
+        <section className="w-full max-w-5xl mx-auto px-3 sm:px-8 lg:px-10 pt-8 sm:pt-14">
           <FadeUp>
-            <div className="bg-white rounded-2xl sm:rounded-3xl border border-gray-100/80 shadow-sm overflow-hidden">
-              <div className="h-1 w-full" style={{ background: "linear-gradient(to left, #0F4C6E, #1F7A8C)" }} />
-              <div className="p-5 sm:p-8">
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center shrink-0" style={{ background: "rgba(15,76,110,0.08)", color: "#0F4C6E" }}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-white shadow-lg shadow-[#0F4C6E]/[0.04] overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-l from-[#0B43FD] to-[#3d8bff]" />
+              <div className="p-4 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#0B43FD]/8 flex items-center justify-center shrink-0 text-[#0B43FD]">
                     <IconLock />
                   </div>
                   <div>
-                    <h2 className="text-lg sm:text-xl font-extrabold text-gray-800">معلومات المتجر</h2>
-                    <div className="h-0.5 w-8 mt-1 rounded-full bg-gradient-to-l from-[#0F4C6E] to-[#1F7A8C]" />
+                    <h2 className="text-base sm:text-xl font-extrabold text-gray-800">معلومات المتجر</h2>
+                    <span className="block h-1 w-8 mt-1 rounded-full bg-[#0B43FD]" />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   {[
                     company.nameAr && { label: "اسم الجهة", value: company.nameAr },
                     company.addressAr && { label: "العنوان", value: company.addressAr },
@@ -278,13 +259,13 @@ export default function PrivacyPage() {
                     company.email && { label: "البريد الإلكتروني", value: company.email },
                     company.taxNumber && { label: "الرقم الضريبي", value: company.taxNumber },
                   ].filter(Boolean).map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-[#f0f7fb]">
-                      <div className="w-6 h-6 rounded-lg bg-[#1F7A8C] flex items-center justify-center text-white shrink-0 mt-0.5">
+                    <div key={i} className="flex items-start gap-3 bg-[#0B43FD]/5 rounded-xl px-3 sm:px-4 py-3 border border-[#0B43FD]/15">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-[#0B43FD] flex items-center justify-center text-white shrink-0 mt-0.5">
                         <IconCheck />
                       </div>
-                      <p className="text-gray-600 text-sm leading-relaxed">
-                        <span className="font-bold text-gray-700">{item && (item as {label:string;value:string}).label}:</span>{" "}
-                        {item && (item as {label:string;value:string}).value}
+                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                        <span className="font-bold text-gray-700">{item && (item as { label: string; value: string }).label}:</span>{" "}
+                        {item && (item as { label: string; value: string }).value}
                       </p>
                     </div>
                   ))}
@@ -296,7 +277,7 @@ export default function PrivacyPage() {
       )}
 
       {/* ════════ CONTACT ════════ */}
-      <section className="w-full max-w-5xl mx-auto px-4 sm:px-8 mt-8 sm:mt-12">
+      <section className="w-full max-w-5xl mx-auto px-3 sm:px-8 lg:px-10 mt-6 sm:mt-12">
         <ContactSection
           title="وسائل التواصل"
           phone={company?.whatsapp}

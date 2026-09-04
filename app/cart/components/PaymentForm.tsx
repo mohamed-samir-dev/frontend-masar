@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { CreditCard, ChevronDown, Calendar, Wallet, CheckCircle2, ArrowRight, Tag } from "lucide-react";
+import { CreditCard, ChevronDown, Calendar, Wallet, CheckCircle2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import type { CustomerInfo } from "../../store/cartStore";
 import { useCartStore } from "../../store/cartStore";
 
 const fmt = (n: number) => n.toLocaleString("ar-EG");
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const resolveImg = (src: string) => src.startsWith("http") ? src : `${API}${src}`;
 
 const DISCOUNT_VALUE = 100;
 
@@ -21,15 +23,15 @@ interface Props {
 }
 
 export default function PaymentForm({ total, itemCount, initialData, installmentMonths, onBack, onSubmit }: Props) {
-  const { pendingDiscountCode } = useCartStore();
+  const { pendingDiscountCode, items } = useCartStore();
 
   const maxMonths = installmentMonths ?? 24;
   const MONTHS_OPTIONS = Array.from({ length: Math.floor(maxMonths / 2) }, (_, i) => (i + 1) * 2);
 
   const DOWN_OPTIONS = [
-    { label: "500 جنيه", amount: 500 },
-    { label: "1,000 جنيه", amount: 1000 },
-    { label: "1,500 جنيه", amount: 1500 },
+    { label: "500 ريال", amount: 500 },
+    { label: "1,000 ريال", amount: 1000 },
+    { label: "1,500 ريال", amount: 1500 },
   ];
 
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "installment");
@@ -64,19 +66,13 @@ export default function PaymentForm({ total, itemCount, initialData, installment
   }, [months, monthly]);
 
   function applyDiscount() {
-    if (!discountCode.trim()) {
-      setDiscountError("أدخل كود الخصم أولاً");
-      return;
-    }
+    if (!discountCode.trim()) { setDiscountError("أدخل كود الخصم أولاً"); return; }
     const code = discountCode.trim().toUpperCase();
     const validCode = (pendingDiscountCode ?? "").toUpperCase();
-    const isValid = (validCode && code === validCode) || /^[A-Z0-9]{6,10}$/.test(code);
-    if (isValid) {
-      setDiscountApplied(true);
-      setDiscountError("");
-    } else {
-      setDiscountError("كود الخصم غير صحيح أو منتهي الصلاحية");
-    }
+    // يُقبل الكود فقط إذا تطابق مع الكود المحدد مسبقاً من المتجر
+    const isValid = !!(validCode && code === validCode);
+    if (isValid) { setDiscountApplied(true); setDiscountError(""); }
+    else { setDiscountError("كود الخصم غير صحيح أو منتهي الصلاحية"); }
   }
 
   const handleSubmit = () => {
@@ -100,39 +96,31 @@ export default function PaymentForm({ total, itemCount, initialData, installment
       {/* Back */}
       <button onClick={onBack} className="flex items-center gap-2 text-sm text-[#0874ED] font-semibold hover:underline">
         <ArrowRight size={15} />
-        رجوع لبيانات الشحن
+        رجوع لبيانات العميل
       </button>
 
-      {/* ملخص الطلب */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="h-1 w-full bg-gradient-to-l from-[#0874ED] to-[#030D2E]" />
-        <div className="px-5 py-4 space-y-3">
-          <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-            <CreditCard size={15} className="text-[#0874ED]" />
-            ملخص الطلب
-          </h2>
-
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">الإجمالي ({itemCount} {itemCount === 1 ? "سلعة" : "سلع"})</span>
-              <span className="font-bold text-gray-800">{fmt(total)} جنيه</span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">الشحن</span>
-              <span className="font-bold text-emerald-500">مجاني 🚚</span>
-            </div>
-            {discountApplied && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">الخصم</span>
-                <span className="font-bold text-red-500">- {fmt(discountAmount)} جنيه</span>
+      {/* سطر المنتجات */}
+      <div className="bg-white rounded-2xl border border-[#E8EDF5] shadow-sm overflow-hidden">
+        <div className="divide-y divide-[#F7F9FC]">
+          {items.map(({ product, qty, cartKey }) => {
+            const price = product.salePrice ?? product.originalPrice ?? product.price;
+            const rawImg = product.images?.[0] || product.image;
+            const img = rawImg ? resolveImg(rawImg) : undefined;
+            return (
+              <div key={cartKey} className="flex items-center gap-3 px-5 py-3.5">
+                <div className="relative w-12 h-12 shrink-0 bg-[#F7F9FC] rounded-xl overflow-hidden border border-[#E8EDF5]">
+                  {img
+                    ? <Image src={img} alt={product.name} fill className="object-contain p-1" />
+                    : <span className="flex items-center justify-center w-full h-full text-xl">📱</span>
+                  }
+                </div>
+                <p className="flex-1 text-sm font-semibold text-[#040D2A] truncate">{product.name}</p>
+                <span className="text-sm font-bold text-[#0874ED] shrink-0">
+                  {fmt(price * qty)} <span className="text-xs font-normal text-[#B0BCCE]">ريال</span>
+                </span>
               </div>
-            )}
-            <div className="border-t border-gray-100 pt-2 flex items-center justify-between">
-              <span className="text-sm font-bold text-gray-700">الإجمالي النهائي</span>
-              <span className="text-xl font-extrabold text-[#0874ED]">{fmt(finalTotal)} جنيه</span>
-            </div>
-            <p className="text-[10px] text-gray-400 text-center">السعر شامل ضريبة القيمة المضافة</p>
-          </div>
+            );
+          })}
         </div>
       </div>
 
@@ -159,19 +147,19 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                   key={opt.value}
                   type="button"
                   onClick={() => setInstallmentType(opt.value as "full" | "installment")}
-                  className={`relative flex flex-col items-center justify-center gap-2 py-4 rounded-2xl border-2 transition-all duration-200 ${
+                  className={`relative flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 transition-all duration-200 ${
                     active
                       ? "border-[#0874ED] bg-gradient-to-br from-[#0874ED]/8 to-[#0874ED]/3 shadow-md"
                       : "border-gray-200 hover:border-gray-300 bg-white"
                   }`}
                 >
                   {active && (
-                    <span className="absolute top-2 left-2">
-                      <CheckCircle2 size={13} className="text-[#0874ED]" />
+                    <span className="absolute top-1.5 left-1.5">
+                      <CheckCircle2 size={11} className="text-[#0874ED]" />
                     </span>
                   )}
-                  <Icon size={17} className={active ? "text-[#0874ED]" : "text-gray-400"} />
-                  <p className={`text-sm font-bold ${active ? "text-[#0874ED]" : "text-gray-700"}`}>{opt.label}</p>
+                  <Icon size={14} className={active ? "text-[#0874ED]" : "text-gray-400"} />
+                  <p className={`text-xs font-bold ${active ? "text-[#0874ED]" : "text-gray-700"}`}>{opt.label}</p>
                 </button>
               );
             })}
@@ -191,18 +179,26 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                   {/* Provider */}
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-gray-600">جهة التقسيط</label>
-                    <div className="rounded-2xl border border-[#0874ED]/20 bg-[#0874ED]/5 p-4 flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl border border-gray-100 bg-white flex items-center justify-center shrink-0 shadow-sm">
-                        <Image src="/logo.webp" alt="نظام المتجر" width={40} height={40} className="object-contain w-full h-full" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <p className="text-sm font-bold text-gray-800">نظام المتجر</p>
-                          <span className="text-[10px] font-bold text-[#0874ED] bg-[#0874ED]/10 px-2 py-0.5 rounded-full">0% فائدة</span>
+                    <div className="rounded-2xl border border-[#0874ED]/20 bg-[#0874ED]/5 p-3 flex flex-col gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl border border-gray-100 bg-white flex items-center justify-center shrink-0 shadow-sm">
+                          <Image src="/logo.webp" alt="نظام المتجر" width={40} height={40} className="object-contain w-full h-full" />
                         </div>
-                        <p className="text-xs text-gray-400">تقسيط مريح بدون فوائد مباشرة من المتجر</p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                            <p className="text-sm font-bold text-gray-800">نظام المتجر</p>
+                            <span className="text-[10px] font-bold text-[#0874ED] bg-[#0874ED]/10 px-2 py-0.5 rounded-full">0% فائدة</span>
+                          </div>
+                          <p className="text-xs text-gray-400 leading-relaxed">تقسيط مريح بدون فوائد مباشرة من المتجر</p>
+                        </div>
+                        <CheckCircle2 size={18} className="text-[#0874ED] shrink-0" />
                       </div>
-                      <CheckCircle2 size={18} className="text-[#0874ED] shrink-0" />
+                      <a
+                        href="http://localhost:3000/taqseet"
+                        className="w-full text-center py-2 bg-[#0874ED] hover:bg-[#0665D0] text-white text-xs font-bold rounded-xl transition-all active:scale-95"
+                      >
+                        خطط التقسيط
+                      </a>
                     </div>
                   </div>
 
@@ -263,18 +259,20 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                   </div>
 
                   {/* Monthly summary */}
-                  <div className="bg-gradient-to-r from-[#0874ED]/8 to-[#030D2E]/5 border border-[#0874ED]/15 rounded-2xl p-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-xs text-gray-500 font-medium">القسط الشهري</p>
-                      <p className="text-2xl font-extrabold text-[#0874ED] mt-0.5">
-                        {fmt(monthly)} <span className="text-sm font-semibold text-gray-400">جنيه</span>
+                  <div className="bg-gradient-to-r from-[#0874ED]/8 to-[#030D2E]/5 border border-[#0874ED]/15 rounded-2xl p-3 grid grid-cols-2 gap-2">
+                    <div className="bg-white/60 rounded-xl p-2.5 text-center">
+                      <p className="text-[10px] text-gray-500 font-medium mb-1">القسط الشهري</p>
+                      <p className="text-lg font-extrabold text-[#0874ED] leading-tight">
+                        {fmt(monthly)}
                       </p>
+                      <p className="text-[10px] text-gray-400">ريال</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500 font-medium">لمدة</p>
-                      <p className="text-lg font-extrabold text-[#040D2A]">
-                        {months} <span className="text-sm font-semibold text-gray-400">شهر</span>
+                    <div className="bg-white/60 rounded-xl p-2.5 text-center">
+                      <p className="text-[10px] text-gray-500 font-medium mb-1">المدة</p>
+                      <p className="text-lg font-extrabold text-[#040D2A] leading-tight">
+                        {months}
                       </p>
+                      <p className="text-[10px] text-gray-400">شهر</p>
                     </div>
                   </div>
 
@@ -298,20 +296,20 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                         className="overflow-hidden"
                       >
                         <div className="rounded-2xl overflow-hidden border border-gray-100 max-h-52 overflow-y-auto">
-                          <table className="w-full text-xs">
+                          <table className="w-full text-xs table-fixed">
                             <thead className="bg-[#030D2E] sticky top-0">
                               <tr>
-                                <th className="py-2.5 px-3 text-right font-semibold text-white/80">#</th>
-                                <th className="py-2.5 px-3 text-right font-semibold text-white/80">التاريخ</th>
-                                <th className="py-2.5 px-3 text-right font-semibold text-white/80">المبلغ</th>
+                                <th className="py-2.5 px-2 text-right font-semibold text-white/80 w-8">#</th>
+                                <th className="py-2.5 px-2 text-right font-semibold text-white/80">التاريخ</th>
+                                <th className="py-2.5 px-2 text-right font-semibold text-white/80">المبلغ</th>
                               </tr>
                             </thead>
                             <tbody>
                               {schedule.map((row, i) => (
                                 <tr key={row.index} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
-                                  <td className="py-2 px-3 text-[#0874ED] font-bold">{row.index}</td>
-                                  <td className="py-2 px-3 text-gray-500">{row.date}</td>
-                                  <td className="py-2 px-3 font-bold text-gray-800">{fmt(row.amount)} جنيه</td>
+                                  <td className="py-2 px-2 text-[#0874ED] font-bold">{row.index}</td>
+                                  <td className="py-2 px-2 text-gray-500">{row.date}</td>
+                                  <td className="py-2 px-2 font-bold text-gray-800 whitespace-nowrap">{fmt(row.amount)} ر</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -325,7 +323,7 @@ export default function PaymentForm({ total, itemCount, initialData, installment
             )}
           </AnimatePresence>
 
-          {/* Cash: Discount code */}
+          {/* Cash: no discount code */}
           <AnimatePresence>
             {installmentType === "full" && (
               <motion.div
@@ -334,76 +332,9 @@ export default function PaymentForm({ total, itemCount, initialData, installment
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 className="overflow-hidden"
-              >
-                <div className="space-y-2 pt-1">
-                  <label className="text-xs font-semibold text-gray-600 flex items-center gap-1.5">
-                    <Tag size={12} className="text-[#0874ED]" />
-                    كود الخصم (اختياري)
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      value={discountCode}
-                      onChange={(e) => {
-                        setDiscountCode(e.target.value.toUpperCase());
-                        setDiscountApplied(false);
-                        setDiscountError("");
-                      }}
-                      placeholder="أدخل كود الخصم"
-                      dir="ltr"
-                      className={`flex-1 bg-gray-50 border rounded-xl px-4 py-3 text-sm font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-[#0874ED]/25 focus:border-[#0874ED] transition-all ${
-                        discountApplied ? "border-green-400 bg-green-50 text-green-700" : discountError ? "border-red-400 bg-red-50" : "border-gray-200"
-                      }`}
-                    />
-                    <button
-                      type="button"
-                      onClick={applyDiscount}
-                      disabled={discountApplied}
-                      className={`px-4 py-3 rounded-xl text-sm font-bold transition-all ${
-                        discountApplied
-                          ? "bg-green-500 text-white cursor-default"
-                          : "bg-[#0874ED] text-white hover:bg-[#0874ED]/90 active:scale-95"
-                      }`}
-                    >
-                      {discountApplied ? "✓ مطبّق" : "تطبيق"}
-                    </button>
-                  </div>
-                  {discountError && <p className="text-red-400 text-xs">{discountError}</p>}
-                  {discountApplied && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-2.5"
-                    >
-                      <span className="text-green-700 text-xs font-semibold">🎉 تم تطبيق الخصم</span>
-                      <span className="text-green-700 text-sm font-extrabold">- {fmt(DISCOUNT_VALUE)} جنيه</span>
-                    </motion.div>
-                  )}
-                  {discountApplied && (
-                    <div className="flex items-center justify-between bg-[#0874ED]/5 rounded-xl px-4 py-2.5">
-                      <span className="text-gray-600 text-xs font-semibold">الإجمالي بعد الخصم</span>
-                      <span className="text-[#0874ED] text-base font-extrabold">{fmt(finalTotal)} جنيه</span>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
+              />
             )}
           </AnimatePresence>
-        </div>
-      </div>
-
-      {/* البطاقات المدعومة */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-        <p className="text-xs font-semibold text-gray-500 mb-3 text-center">البطاقات المدعومة</p>
-        <div className="flex items-center justify-center gap-3">
-          <div className="h-8 w-14 relative">
-            <Image src="/فيزا ماستر مدى.webp" alt="فيزا ماستر مدى" fill className="object-contain" />
-          </div>
-          <div className="h-8 w-14 relative">
-            <Image src="/mada975b.png" alt="مدى" fill className="object-contain" />
-          </div>
-          <div className="h-8 w-14 relative">
-            <Image src="/Apple-Pay-01.png" alt="Apple Pay" fill className="object-contain" />
-          </div>
         </div>
       </div>
 

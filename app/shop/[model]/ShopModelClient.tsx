@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "../../components/products/ProductCard";
 import type { Product } from "../../components/products/types";
 
@@ -37,95 +37,14 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
     return () => clearInterval(t);
   }, [slides, nextSlide]);
   // ── Filter state ──────────────────────────────────────────────
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [selectedStorages, setSelectedStorages] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number] | null>(null);
-  const [onlyInstallment, setOnlyInstallment] = useState(false);
-  const [onlyInStock, setOnlyInStock] = useState(false);
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "discount">("default");
   const [page, setPage] = useState(1);
 
-  // ── Derive filter options from products ───────────────────────
-  const allColors = useMemo(() => {
-    const set = new Set<string>();
-    products.forEach((p) => {
-      p.variants?.forEach((v) => v.color && set.add(v.color));
-      if (p.color) set.add(p.color);
-    });
-    return [...set];
-  }, [products]);
+  const resetFilters = () => { setSortBy("default"); setPage(1); };
 
-  const allStorages = useMemo(() => {
-    const set = new Set<string>();
-    products.forEach((p) => {
-      p.variants?.forEach((v) =>
-        v.storageOptions?.forEach((s) => s.storage && set.add(s.storage))
-      );
-      if (p.storage) set.add(p.storage);
-    });
-    return [...set].sort((a, b) => parseInt(a) - parseInt(b));
-  }, [products]);
-
-  const maxPrice = useMemo(() => {
-    let max = 0;
-    products.forEach((p) => {
-      if (p.variants?.length) {
-        p.variants.forEach((v) =>
-          v.storageOptions?.forEach((s) => {
-            const price = s.salePrice ?? s.originalPrice;
-            if (price > max) max = price;
-          })
-        );
-      } else {
-        const price = p.salePrice ?? p.originalPrice ?? p.price ?? 0;
-        if (price > max) max = price;
-      }
-    });
-    return max;
-  }, [products]);
-
-  // ── Apply filters ─────────────────────────────────────────────
+  // ── Apply sort ────────────────────────────────────────────────
   const filtered = useMemo(() => {
-    let list = [...products];
-
-    if (selectedColors.length) {
-      list = list.filter((p) => {
-        const colors = p.variants?.map((v) => v.color) ?? (p.color ? [p.color] : []);
-        return colors.some((c) => selectedColors.includes(c));
-      });
-    }
-
-    if (selectedStorages.length) {
-      list = list.filter((p) => {
-        const storages =
-          p.variants?.flatMap((v) => v.storageOptions?.map((s) => s.storage) ?? []) ??
-          (p.storage ? [p.storage] : []);
-        return storages.some((s) => selectedStorages.includes(s));
-      });
-    }
-
-    if (priceRange) {
-      list = list.filter((p) => {
-        const prices: number[] = [];
-        if (p.variants?.length) {
-          p.variants.forEach((v) =>
-            v.storageOptions?.forEach((s) => prices.push(s.salePrice ?? s.originalPrice))
-          );
-        }
-        if (!prices.length) prices.push(p.salePrice ?? p.originalPrice ?? p.price ?? 0);
-        return prices.some((price) => price >= priceRange[0] && price <= priceRange[1]);
-      });
-    }
-
-    if (onlyInstallment) {
-      list = list.filter((p) => p.installment?.available);
-    }
-
-    if (onlyInStock) {
-      list = list.filter((p) => p.inStock);
-    }
-
+    const list = [...products];
     if (sortBy === "price-asc") {
       list.sort((a, b) => (a.salePrice ?? a.originalPrice ?? 0) - (b.salePrice ?? b.originalPrice ?? 0));
     } else if (sortBy === "price-desc") {
@@ -133,32 +52,11 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
     } else if (sortBy === "discount") {
       list.sort((a, b) => (b.discountPercent ?? 0) - (a.discountPercent ?? 0));
     }
-
     return list;
-  }, [products, selectedColors, selectedStorages, priceRange, onlyInstallment, onlyInStock, sortBy]);
+  }, [products, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-
-  const activeFiltersCount =
-    selectedColors.length +
-    selectedStorages.length +
-    (priceRange ? 1 : 0) +
-    (onlyInstallment ? 1 : 0) +
-    (onlyInStock ? 1 : 0);
-
-  const resetFilters = () => {
-    setSelectedColors([]);
-    setSelectedStorages([]);
-    setPriceRange(null);
-    setOnlyInstallment(false);
-    setOnlyInStock(false);
-    setSortBy("default");
-    setPage(1);
-  };
-
-  const toggle = <T,>(arr: T[], val: T) =>
-    arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val];
 
   return (
     <main dir="rtl" className="min-h-screen bg-[#f5f7ff]">
@@ -272,31 +170,7 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
       <div className="max-w-[1380px] mx-auto px-4 sm:px-8 py-8">
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-3 mb-6">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setFilterOpen(!filterOpen)}
-              className="flex items-center gap-2 bg-white border border-[#e0e7ff] text-[#0B43FD] font-bold text-sm px-4 py-2 rounded-xl shadow-sm hover:bg-[#0B43FD] hover:text-white transition-colors cursor-pointer"
-            >
-              <SlidersHorizontal size={16} />
-              فلتر
-              {activeFiltersCount > 0 && (
-                <span className="bg-[#0B43FD] text-white text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center group-hover:bg-white group-hover:text-[#0B43FD]">
-                  {activeFiltersCount}
-                </span>
-              )}
-            </button>
-            {activeFiltersCount > 0 && (
-              <button
-                onClick={resetFilters}
-                className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors cursor-pointer"
-              >
-                <X size={13} /> مسح الكل
-              </button>
-            )}
-          </div>
-
-          {/* Sort */}
+        <div className="flex items-center justify-end gap-3 mb-6">
           <select
             value={sortBy}
             onChange={(e) => { setSortBy(e.target.value as typeof sortBy); setPage(1); }}
@@ -309,113 +183,9 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
           </select>
         </div>
 
-        {/* Filter Panel */}
-        {filterOpen && (
-          <div className="bg-white border border-[#e0e7ff] rounded-2xl p-5 mb-6 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-            {/* Colors */}
-            {allColors.length > 0 && (
-              <div>
-                <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-3">اللون</p>
-                <div className="flex flex-wrap gap-2">
-                  {allColors.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => { setSelectedColors(toggle(selectedColors, c)); setPage(1); }}
-                      className={`text-xs px-3 py-1.5 rounded-lg border font-semibold cursor-pointer transition-colors ${
-                        selectedColors.includes(c)
-                          ? "bg-[#0B43FD] text-white border-[#0B43FD]"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-[#0B43FD]"
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Storage */}
-            {allStorages.length > 0 && (
-              <div>
-                <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-3">السعة</p>
-                <div className="flex flex-wrap gap-2">
-                  {allStorages.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => { setSelectedStorages(toggle(selectedStorages, s)); setPage(1); }}
-                      className={`text-xs px-3 py-1.5 rounded-lg border font-semibold cursor-pointer transition-colors ${
-                        selectedStorages.includes(s)
-                          ? "bg-[#0B43FD] text-white border-[#0B43FD]"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-[#0B43FD]"
-                      }`}
-                    >
-                      {s}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Price Range */}
-            <div>
-              <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-3">
-                السعر {priceRange ? `(${priceRange[0].toLocaleString()} – ${priceRange[1].toLocaleString()} ر.س)` : ""}
-              </p>
-              <div className="flex flex-col gap-2">
-                {[
-                  [0, 1000],
-                  [1000, 3000],
-                  [3000, 6000],
-                  [6000, maxPrice],
-                ].map(([min, max]) => (
-                  <button
-                    key={`${min}-${max}`}
-                    onClick={() => {
-                      setPriceRange(priceRange?.[0] === min && priceRange?.[1] === max ? null : [min, max]);
-                      setPage(1);
-                    }}
-                    className={`text-xs px-3 py-1.5 rounded-lg border font-semibold cursor-pointer transition-colors text-right ${
-                      priceRange?.[0] === min && priceRange?.[1] === max
-                        ? "bg-[#0B43FD] text-white border-[#0B43FD]"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-[#0B43FD]"
-                    }`}
-                  >
-                    {min.toLocaleString()} – {max === maxPrice ? `${max.toLocaleString()}+` : max.toLocaleString()} ر.س
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Toggles */}
-            <div>
-              <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-3">خيارات</p>
-              <div className="flex flex-col gap-3">
-                {[
-                  { label: "تقسيط متاح", val: onlyInstallment, set: setOnlyInstallment },
-                  { label: "متوفر فقط", val: onlyInStock, set: setOnlyInStock },
-                ].map(({ label, val, set }) => (
-                  <button
-                    key={label}
-                    onClick={() => { set(!val); setPage(1); }}
-                    className="flex items-center gap-2 cursor-pointer group"
-                  >
-                    <span className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${val ? "bg-[#0B43FD] border-[#0B43FD]" : "border-gray-300 group-hover:border-[#0B43FD]"}`}>
-                      {val && <span className="text-white text-[10px] font-black">✓</span>}
-                    </span>
-                    <span className="text-sm text-gray-700 font-medium">{label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-          </div>
-        )}
-
         {/* Results count */}
         <p className="text-sm text-gray-500 mb-4">
           عرض <span className="font-bold text-gray-800">{filtered.length}</span> منتج
-          {activeFiltersCount > 0 && " (بعد الفلتر)"}
         </p>
 
         {/* Grid */}
@@ -429,7 +199,7 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {paginated.map((p, i) => (
-              <ProductCard key={p._id} product={p} priority={i < 4} highlightColor={selectedColors[0]} />
+              <ProductCard key={p._id} product={p} priority={i < 4} />
             ))}
           </div>
         )}

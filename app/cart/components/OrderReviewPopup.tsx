@@ -37,33 +37,38 @@ export default function OrderReviewPopup({ customer, total, onDone }: Props) {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm sm:px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
       dir="rtl"
     >
       <motion.div
         initial={{ scale: 0.92, opacity: 0, y: 28 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
-        className="w-full sm:max-w-sm bg-[#f4f6f8] sm:rounded-3xl rounded-none overflow-hidden shadow-2xl"
+        className="w-full sm:max-w-sm bg-white rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl max-h-[92dvh] flex flex-col"
       >
+        {/* drag handle */}
+        <div className="sm:hidden flex justify-center pt-2.5 pb-1 shrink-0">
+          <div className="w-10 h-1 bg-gray-200 rounded-full" />
+        </div>
+
         {/* Header */}
-        <div className="bg-gradient-to-l from-[#1a6b7d] to-[#1d8fa5] px-4 py-4 sm:px-6 sm:py-5 flex items-center justify-between">
+        <div className="bg-gradient-to-l from-[#0874ED] to-[#030D2E] px-4 py-3 flex items-center justify-between shrink-0">
           <div>
             <p className="text-white/60 text-xs font-medium">ملخص طلبك</p>
-            <h2 className="text-white font-extrabold text-xl sm:text-2xl mt-0.5">{fmt(finalTotal)} <span className="text-sm font-semibold text-white/70">ر.س</span></h2>
+            <h2 className="text-white font-extrabold text-lg mt-0.5">{fmt(finalTotal)} <span className="text-xs font-semibold text-white/70">ر.س</span></h2>
           </div>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/15 rounded-2xl flex items-center justify-center shrink-0">
-            <CreditCard size={20} className="text-white" />
+          <div className="w-9 h-9 bg-white/15 rounded-xl flex items-center justify-center shrink-0">
+            <CreditCard size={17} className="text-white" />
           </div>
         </div>
 
-        <div className="px-3 py-3 sm:px-4 sm:py-4 space-y-3">
+        <div className="px-3 py-3 space-y-3 overflow-y-auto">
 
           {/* بوكس بيانات العميل */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
             <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#1a6b7d]/10 rounded-lg flex items-center justify-center">
-                <User size={13} className="text-[#1a6b7d]" />
+              <div className="w-7 h-7 bg-[#0874ED]/10 rounded-lg flex items-center justify-center">
+                <User size={13} className="text-[#0874ED]" />
               </div>
               <p className="text-xs font-extrabold text-gray-700">بيانات العميل</p>
             </div>
@@ -75,7 +80,7 @@ export default function OrderReviewPopup({ customer, total, onDone }: Props) {
                 { icon: RiMapPin2Line,  label: "العنوان",  value: customer.address,    ltr: false },
               ].map(({ icon: Icon, label, value, ltr }) => (
                 <div key={label} className="flex items-center gap-3">
-                  <Icon size={14} className="text-[#1a6b7d] shrink-0" />
+                  <Icon size={14} className="text-[#0874ED] shrink-0" />
                   <span className="text-xs text-gray-400 w-12 shrink-0">{label}</span>
                   <span className="text-sm font-bold text-gray-800 flex-1 truncate" dir={ltr ? "ltr" : "rtl"}>{value}</span>
                 </div>
@@ -86,8 +91,8 @@ export default function OrderReviewPopup({ customer, total, onDone }: Props) {
           {/* بوكس بيانات الدفع */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-sm">
             <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-              <div className="w-7 h-7 bg-[#7CC043]/15 rounded-lg flex items-center justify-center">
-                <CreditCard size={13} className="text-[#7CC043]" />
+              <div className="w-7 h-7 bg-[#0874ED]/10 rounded-lg flex items-center justify-center">
+                <CreditCard size={13} className="text-[#0874ED]" />
               </div>
               <p className="text-xs font-extrabold text-gray-700">بيانات الدفع</p>
             </div>
@@ -119,7 +124,7 @@ export default function OrderReviewPopup({ customer, total, onDone }: Props) {
                   exit={{ opacity: 0, scale: 0.8 }}
                   className="flex flex-col items-center gap-2.5"
                 >
-                  <div className="w-12 h-12 rounded-full border-[3.5px] border-gray-100 border-t-[#1a6b7d] animate-spin" />
+                  <div className="w-12 h-12 rounded-full border-[3.5px] border-[#0874ED]/15 border-t-[#0874ED] animate-spin" />
                   <p className="text-sm font-bold text-gray-700">جاري مراجعة طلبك</p>
                   {isInstallment && (
                     <p className="text-xs text-gray-400 text-center">جاري متابعة إمكانية قبول التقسيط لحسابك</p>
@@ -170,7 +175,7 @@ function PayRow({ label, value, highlight, green }: { label: string; value: stri
   return (
     <div className="flex items-center justify-between gap-2">
       <span className="text-xs text-gray-400">{label}</span>
-      <span className={`text-sm font-extrabold ${highlight ? "text-[#1a6b7d] text-base" : green ? "text-green-600" : "text-gray-800"}`}>
+      <span className={`text-sm font-extrabold ${highlight ? "text-[#0874ED] text-base" : green ? "text-green-600" : "text-gray-800"}`}>
         {value}
       </span>
     </div>

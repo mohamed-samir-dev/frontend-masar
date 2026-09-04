@@ -32,8 +32,8 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
   const hasDiscount = salePrice != null && salePrice !== originalPrice;
   const savings = hasDiscount ? originalPrice - (salePrice ?? 0) : 0;
   const discountPct = hasDiscount ? Math.round((savings / originalPrice) * 100) : 0;
-  const activeVariant = product.variants?.find((v) => v.color === selectedColor);
-  const storageOpts = activeVariant?.storageOptions ?? [];
+  const baseStorageOpts = product.variants?.[0]?.storageOptions ?? [];
+  const storageOpts = baseStorageOpts;
 
   const handleAdd = () => {
     setLoading(true);
@@ -101,7 +101,7 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
                     key={v.color}
                     title={v.color}
                     whileTap={{ scale: 0.88 }}
-                    onClick={() => { onColorChange(v.color); onStorageChange(v.storageOptions?.[0]?.storage ?? ""); }}
+                    onClick={() => { onColorChange(v.color); }}
                     className={`relative w-6 h-6 rounded-full border-2 cursor-pointer transition-all duration-200 ${
                       selectedColor === v.color
                         ? "border-[#0B43FD] shadow-[0_0_0_2px_rgba(11,67,253,0.15)]"

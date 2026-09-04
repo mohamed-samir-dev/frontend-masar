@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useCallback, useEffect } from "react";
+import { memo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShoppingCart, CheckCircle2 } from "lucide-react";
@@ -18,20 +18,9 @@ const resolveImg = (src: string) => {
   return `${API}${src.startsWith("/") ? src : "/" + src}`;
 };
 
-function ProductCard({ product, priority = false, highlightColor }: { product: Product; priority?: boolean; highlightColor?: string }) {
+function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const hasVariants = product.variants && product.variants.length > 0;
-  const initialVariantIdx = (() => {
-    if (!highlightColor || !product.variants) return 0;
-    const idx = product.variants.findIndex((v) => v.color === highlightColor);
-    return idx >= 0 ? idx : 0;
-  })();
-  const [activeVariantIdx, setActiveVariantIdx] = useState(initialVariantIdx);
-
-  useEffect(() => {
-    if (!highlightColor || !product.variants) return;
-    const idx = product.variants.findIndex((v) => v.color === highlightColor);
-    if (idx >= 0) setActiveVariantIdx(idx);
-  }, [highlightColor, product.variants]);
+  const [activeVariantIdx, setActiveVariantIdx] = useState(0);
   const getDefaultStorageIdx = (variant: ProductVariant | undefined) => {
     if (!variant?.storageOptions) return 0;
     if (variant.defaultStorage) {

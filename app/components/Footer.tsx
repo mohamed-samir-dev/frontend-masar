@@ -185,7 +185,10 @@ export default async function Footer() {
             <span className="text-[#0874ED] font-semibold">مسار الهاتف المعتمد</span>
           </p>
 
-          <Image src="/فيزا ماستر مدى.webp" alt="بطاقات الدفع" width={85} height={28} className="object-contain" style={{ width: 85, height: 28 }} />
+          <div className="flex items-center gap-3">
+            <Image src="/فيزا ماستر مدى.webp" alt="بطاقات الدفع" width={120} height={40} className="object-contain" style={{ width: 120, height: 40 }} />
+            <Image src="/Apple-Pay-01.png" alt="Apple Pay" width={80} height={40} className="object-contain" style={{ width: 80, height: 40 }} />
+          </div>
 
         </div>
       </div>

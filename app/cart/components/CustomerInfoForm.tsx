@@ -8,6 +8,7 @@ import type { CustomerInfo } from "../../store/cartStore";
 interface Props {
   initialData?: Partial<CustomerInfo>;
   onNext: (info: Partial<CustomerInfo>) => void;
+  onContinue?: () => void;
 }
 
 const fields = [
@@ -17,7 +18,7 @@ const fields = [
   { key: "address",    label: "عنوان التوصيل",          icon: RiMapPin2Line,  placeholder: "المدينة – الحي – الشارع",  dir: "rtl" },
 ];
 
-export default function CustomerInfoForm({ initialData, onNext }: Props) {
+export default function CustomerInfoForm({ initialData, onNext, onContinue }: Props) {
   const [values, setValues] = useState({
     name:       initialData?.name       ?? "",
     nationalId: initialData?.nationalId ?? "",
@@ -58,22 +59,29 @@ export default function CustomerInfoForm({ initialData, onNext }: Props) {
     return Object.keys(e).length === 0;
   };
 
+  const handleContinue = () => {
+    if (validate()) {
+      onNext(values);
+      onContinue?.();
+    }
+  };
+
   return (
-    <div className="bg-[#FEFEFE] rounded-2xl border border-[#E8EDF5]">
+    <div className="bg-white rounded-2xl border border-[#E8EDF5] shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-[#E8EDF5] flex items-center gap-2.5">
-        <div className="w-7 h-7 bg-[#0874ED]/10 rounded-lg flex items-center justify-center">
-          <RiUser3Line size={13} className="text-[#0874ED]" />
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-[#E8EDF5] flex items-center gap-2 sm:gap-3">
+        <div className="w-7 h-7 sm:w-9 sm:h-9 bg-[#0874ED]/10 rounded-xl flex items-center justify-center shrink-0">
+          <RiUser3Line size={14} className="text-[#0874ED]" />
         </div>
-        <h2 className="text-sm font-semibold text-[#040D2A]">معلومات العميل</h2>
+        <h2 className="text-sm sm:text-base font-bold text-[#040D2A]">معلومات العميل</h2>
       </div>
 
       {/* Fields */}
-      <div className="px-4 py-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         {fields.map(({ key, label, icon: Icon, placeholder, dir }) => (
           <div key={key} ref={refs[key as keyof typeof refs]} className="space-y-1.5">
-            <label className="text-[11px] font-medium text-[#6B7A8D] flex items-center gap-1">
-              <Icon size={11} className="text-[#0874ED]" />
+            <label className="text-xs sm:text-sm font-semibold text-[#6B7A8D] flex items-center gap-1">
+              <Icon size={12} className="text-[#0874ED]" />
               {label} <span className="text-[#0874ED]">*</span>
             </label>
             <input
@@ -83,7 +91,7 @@ export default function CustomerInfoForm({ initialData, onNext }: Props) {
               dir={dir}
               type={key === "whatsapp" ? "tel" : "text"}
               {...(key === "nationalId" || key === "whatsapp" ? { inputMode: "numeric" as const, maxLength: 10 } : {})}
-              className={`w-full rounded-xl px-3 py-2.5 text-sm text-[#040D2A] border transition-all outline-none placeholder:text-[#C8D0DC] ${
+              className={`w-full rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm text-[#040D2A] border transition-all outline-none placeholder:text-[#C8D0DC] ${
                 errors[key]
                   ? "bg-red-50 border-red-300 focus:ring-2 focus:ring-red-200"
                   : "bg-[#F7F9FC] border-[#E8EDF5] focus:bg-white focus:border-[#0874ED] focus:ring-2 focus:ring-[#0874ED]/15"
@@ -106,19 +114,20 @@ export default function CustomerInfoForm({ initialData, onNext }: Props) {
       </div>
 
       {/* CTA */}
-      <div className="px-4 pb-4">
-        <button
-          onClick={() => { if (validate()) onNext(values); }}
-          data-cta
-          className="group w-full py-3.5 bg-[#0874ED] hover:bg-[#0558B8] active:scale-[0.98] text-white rounded-xl font-semibold text-sm transition-all flex items-center justify-between px-4 shadow-md shadow-[#0874ED]/20"
-        >
-          <span className="w-7" />
-          <span className="tracking-wide">التالي — اختيار طريقة الدفع</span>
-          <span className="w-7 h-7 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-colors">
-            <RiArrowLeftLine size={14} />
-          </span>
-        </button>
-      </div>
+      {onContinue && (
+        <div className="px-4 sm:px-6 pb-4 sm:pb-5">
+          <button
+            onClick={handleContinue}
+            className="group w-full py-2.5 sm:py-3 bg-[#0874ED] hover:bg-[#0665D0] active:scale-[0.98] text-white rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-between px-3 sm:px-4 shadow-md shadow-[#0874ED]/25"
+          >
+            <span className="w-5" />
+            <span>التالي: طريقة الدفع</span>
+            <span className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center group-hover:bg-white/30 transition-colors">
+              <RiArrowLeftLine size={11} />
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
