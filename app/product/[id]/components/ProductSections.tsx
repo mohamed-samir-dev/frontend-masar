@@ -7,7 +7,7 @@ import type { ProductSection } from "../../../components/products/types";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
 };
 const stagger = { show: { transition: { staggerChildren: 0.12 } } };
 
@@ -142,6 +142,66 @@ function DesignSection({ section }: { section: ProductSection }) {
 // ─────────────────────────────────────────────────────────────────
 // CAMERA SECTION
 // ─────────────────────────────────────────────────────────────────
+function ExpandableText({ text, className }: { text: string; className?: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = text.length > 120;
+  return (
+    <div>
+      <p className={className}>
+        {isLong && !expanded ? text.slice(0, 120) + "…" : text}
+      </p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-1 flex items-center gap-1 text-[11px] font-black text-white/50 hover:text-white/80 transition-colors cursor-pointer"
+        >
+          {expanded ? "أقل" : "المزيد"}
+          <svg
+            className={`w-3 h-3 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+          >
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function LensCard({ lens }: { lens: { name: string; model: string; specs: string[] } }) {
+  const [expanded, setExpanded] = useState(false);
+  const LIMIT = 2;
+  const visible = expanded ? lens.specs : lens.specs.slice(0, LIMIT);
+  return (
+    <motion.div variants={fadeUp} className="bg-gray-900 rounded-2xl p-4 sm:p-5 text-white">
+      <p className="text-[10px] font-black text-[#60a5fa] uppercase tracking-wider mb-1">{lens.model}</p>
+      <p className="text-sm font-black mb-2 sm:mb-3">{lens.name}</p>
+      <ul className="space-y-1.5">
+        {visible.map((s, si) => (
+          <li key={si} className="flex items-start gap-2 text-xs text-white/60">
+            <span className="text-[#60a5fa] font-black shrink-0 mt-0.5">·</span>
+            {s}
+          </li>
+        ))}
+      </ul>
+      {lens.specs.length > LIMIT && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-2 flex items-center gap-1 text-[11px] font-black text-[#60a5fa]/70 hover:text-[#60a5fa] transition-colors cursor-pointer"
+        >
+          {expanded ? "أقل" : `+${lens.specs.length - LIMIT} المزيد`}
+          <svg
+            className={`w-3 h-3 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`}
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+          >
+            <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
+    </motion.div>
+  );
+}
+
 function CameraSection({ section }: { section: ProductSection }) {
   const content = section.content as Record<string, unknown>;
   const hero = content?.hero as { stats: { value: string; label: string }[]; description: string } | undefined;
@@ -155,46 +215,36 @@ function CameraSection({ section }: { section: ProductSection }) {
   return (
     <section className="mt-16" dir="rtl">
       <InView>
-        <motion.div variants={fadeUp} className="mb-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+        <motion.div variants={fadeUp} className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
           <div className="flex items-center gap-3">
             <div className="w-1 h-10 rounded-full bg-gradient-to-b from-[#0B43FD] to-[#0B43FD]/30" />
             <div>
               <p className="text-[10px] font-black tracking-[0.22em] uppercase text-[#0B43FD] mb-0.5">الكاميرا</p>
-              <h2 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">{section.title}</h2>
+              <h2 className="text-xl sm:text-3xl font-black text-gray-900 leading-tight">{section.title}</h2>
             </div>
           </div>
-          {section.subtitle && <p className="text-gray-400 text-sm sm:mr-auto">{section.subtitle}</p>}
+          {section.subtitle && <p className="text-gray-400 text-xs sm:text-sm sm:mr-auto">{section.subtitle}</p>}
         </motion.div>
       </InView>
 
       {/* Hero – full bleed with stats */}
       {section.media?.[0]?.url && hero && (
         <InView>
-          <motion.div variants={fadeUp} className="relative rounded-3xl overflow-hidden mb-4" style={{ minHeight: 480 }}>
-            <Image
-              src={section.media[0].url}
-              alt={section.media[0].alt ?? ""}
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
+          <motion.div variants={fadeUp} className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-4" style={{ minHeight: "clamp(300px, 55vw, 480px)" }}>
+            <Image src={section.media[0].url} alt={section.media[0].alt ?? ""} fill className="object-cover" sizes="100vw" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/10" />
 
-            <div className="relative z-10 flex flex-col justify-end h-full p-6 sm:p-10" style={{ minHeight: 480 }}>
+            <div className="relative z-10 flex flex-col justify-end h-full p-4 sm:p-10" style={{ minHeight: "clamp(300px, 55vw, 480px)" }}>
               {/* Stats row */}
-              <div className="flex gap-8 sm:gap-14 mb-5 justify-center sm:justify-start">
+              <div className="flex gap-5 sm:gap-14 mb-3 sm:mb-5 justify-center sm:justify-start">
                 {hero.stats.map((s, i) => (
-                  <motion.div
-                    key={i}
-                    variants={fadeUp}
-                    className="text-center sm:text-right"
-                  >
-                    <p className="text-4xl sm:text-5xl font-black text-white">{s.value}</p>
-                    <p className="text-[10px] sm:text-xs text-white/50 mt-1 max-w-[90px] leading-snug">{s.label}</p>
+                  <motion.div key={i} variants={fadeUp} className="text-center sm:text-right">
+                    <p className="text-2xl sm:text-5xl font-black text-white">{s.value}</p>
+                    <p className="text-[9px] sm:text-xs text-white/50 mt-0.5 max-w-[80px] leading-snug">{s.label}</p>
                   </motion.div>
                 ))}
               </div>
-              <p className="text-sm text-white/70 leading-loose max-w-2xl">{hero.description}</p>
+              <ExpandableText text={hero.description} className="text-xs sm:text-sm text-white/70 leading-relaxed max-w-2xl" />
             </div>
           </motion.div>
         </InView>
@@ -203,7 +253,7 @@ function CameraSection({ section }: { section: ProductSection }) {
       {/* Zoom interactive */}
       {zoomLevels.length > 0 && (
         <InView>
-          <motion.div variants={fadeUp} className="relative rounded-3xl overflow-hidden mb-4" style={{ minHeight: 400 }}>
+          <motion.div variants={fadeUp} className="relative rounded-2xl sm:rounded-3xl overflow-hidden mb-4" style={{ minHeight: "clamp(260px, 50vw, 400px)" }}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeZoom}
@@ -220,31 +270,31 @@ function CameraSection({ section }: { section: ProductSection }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
             {/* Zoom badge */}
-            <div className="absolute top-5 right-5 z-10">
+            <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeZoom}
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className="bg-black/60 backdrop-blur-md text-white text-2xl font-black px-5 py-2.5 rounded-2xl border border-white/10"
+                  className="bg-black/60 backdrop-blur-md text-white text-base sm:text-2xl font-black px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl border border-white/10"
                 >
                   {zoomLevels[activeZoom].label}
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* Zoom pills at bottom */}
-            <div className="absolute bottom-0 inset-x-0 z-10 p-5">
+            {/* Zoom pills at bottom – scrollable on mobile */}
+            <div className="absolute bottom-0 inset-x-0 z-10 p-3 sm:p-5">
               {zoomFooter && (
-                <p className="text-white/60 text-xs text-center mb-3">{zoomFooter.text}</p>
+                <p className="text-white/60 text-[10px] sm:text-xs text-center mb-2 sm:mb-3 hidden sm:block">{zoomFooter.text}</p>
               )}
-              <div className="flex gap-2 justify-center flex-wrap">
+              <div className="flex gap-1.5 sm:gap-2 overflow-x-auto sm:justify-center sm:flex-wrap scrollbar-hide pb-0.5">
                 {zoomLevels.map((z, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveZoom(i)}
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-black transition-all duration-200 cursor-pointer backdrop-blur-sm ${
+                    className={`px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-black whitespace-nowrap shrink-0 transition-all duration-200 cursor-pointer backdrop-blur-sm ${
                       activeZoom === i
                         ? "bg-white text-gray-900 shadow-lg"
                         : "bg-white/15 text-white hover:bg-white/25 border border-white/20"
@@ -262,40 +312,23 @@ function CameraSection({ section }: { section: ProductSection }) {
       {/* Lenses */}
       {lenses.length > 0 && (
         <InView className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-          {lenses.map((lens, i) => (
-            <motion.div
-              key={i}
-              variants={fadeUp}
-              className="bg-gray-900 rounded-2xl p-5 text-white"
-            >
-              <p className="text-[10px] font-black text-[#60a5fa] uppercase tracking-wider mb-1">{lens.model}</p>
-              <p className="text-sm font-black mb-3">{lens.name}</p>
-              <ul className="space-y-2">
-                {lens.specs.map((s, si) => (
-                  <li key={si} className="flex items-start gap-2 text-xs text-white/60">
-                    <span className="text-[#60a5fa] font-black shrink-0 mt-0.5">·</span>
-                    {s}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
+          {lenses.map((lens, i) => <LensCard key={i} lens={lens} />)}
         </InView>
       )}
 
       {/* Pro Photos grid */}
       {proPhotos && (
         <InView>
-          <motion.div variants={fadeUp} className="rounded-3xl overflow-hidden">
-            <div className="bg-gray-900 px-6 py-5">
-              <p className="text-xl font-black text-white">{proPhotos.title}</p>
+          <motion.div variants={fadeUp} className="rounded-2xl sm:rounded-3xl overflow-hidden">
+            <div className="bg-gray-900 px-4 sm:px-6 py-3 sm:py-5">
+              <p className="text-base sm:text-xl font-black text-white">{proPhotos.title}</p>
             </div>
             <div className="grid grid-cols-2 gap-0.5">
               {proPhotos.items.slice(0, 4).map((item, i) => (
                 <div key={i} className="relative group overflow-hidden" style={{ aspectRatio: "1/1" }}>
                   <Image src={item.image} alt={item.label} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="50vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-4">
-                    <p className="text-white text-xs font-semibold leading-snug">{item.label}</p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end p-3 sm:p-4">
+                    <p className="text-white text-[10px] sm:text-xs font-semibold leading-snug">{item.label}</p>
                   </div>
                 </div>
               ))}

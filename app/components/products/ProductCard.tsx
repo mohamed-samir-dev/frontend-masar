@@ -100,10 +100,10 @@ function ProductCard({ product, priority = false }: { product: Product; priority
       </div>
 
       {/* ── Body ── */}
-      <div className="flex flex-col gap-1 p-2 sm:p-4 flex-1">
+      <div className="flex flex-col gap-1 sm:gap-1 p-2 sm:p-4 flex-1">
 
         {/* Name */}
-        <p onClick={goToProduct} className="text-[11px] sm:text-[13px] font-bold text-gray-900 leading-snug line-clamp-2 min-h-[30px] sm:min-h-[34px] cursor-pointer">
+        <p onClick={goToProduct} className="text-[11px] sm:text-[13px] font-bold text-gray-900 leading-snug line-clamp-2 min-h-[28px] sm:min-h-[34px] cursor-pointer">
           {displayName}
         </p>
 
@@ -126,7 +126,7 @@ function ProductCard({ product, priority = false }: { product: Product; priority
             {activeVariant.storageOptions.map((opt, i) => (
               <button key={opt.storage}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveStorageIdx(i); }}
-                className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg text-[10px] sm:text-[11px] font-bold border cursor-pointer transition-colors duration-150 ${activeStorageIdx === i ? "bg-[#0B43FD] text-white border-[#0B43FD]" : "bg-white text-[#0B43FD] border-[#0B43FD]/30"}`}
+                className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[11px] font-bold border cursor-pointer transition-colors duration-150 ${activeStorageIdx === i ? "bg-[#0B43FD] text-white border-[#0B43FD]" : "bg-white text-[#0B43FD] border-[#0B43FD]/30"}`}
               >
                 {opt.storage}
               </button>
@@ -136,14 +136,14 @@ function ProductCard({ product, priority = false }: { product: Product; priority
 
         {/* Price */}
         <div className="flex items-baseline gap-1 pt-1 border-t border-gray-100">
-          <span className="text-[15px] sm:text-[20px] font-black text-[#0B43FD] leading-none">{fmt(displayPrice)}</span>
-          <span className="text-[10px] font-bold text-[#0B43FD]/60">ر.س</span>
-          {hasDiscount && <span className="text-[10px] text-gray-400 line-through">{fmt(originalPrice)}</span>}
+          <span className="text-[14px] sm:text-[20px] font-black text-[#0B43FD] leading-none">{fmt(displayPrice)}</span>
+          <span className="text-[9px] sm:text-[10px] font-bold text-[#0B43FD]/60">ر.س</span>
+          {hasDiscount && <span className="text-[9px] sm:text-[10px] text-gray-400 line-through">{fmt(originalPrice)}</span>}
         </div>
 
         {/* CTA */}
         <button onClick={handleAddToCart} disabled={!product.inStock}
-          className={`mt-auto w-full flex items-center justify-center gap-1 py-1.5 sm:py-2.5 rounded-xl text-[10px] sm:text-[12px] font-black text-white border-none cursor-pointer transition-opacity duration-150 ${added ? "bg-emerald-500" : "bg-[#0B43FD]"} disabled:bg-gray-300 disabled:cursor-not-allowed hover:opacity-90`}
+          className={`mt-2 w-full flex items-center justify-center gap-1 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[11px] sm:text-[12px] font-black text-white border-none cursor-pointer transition-opacity duration-150 ${added ? "bg-emerald-500" : "bg-[#0B43FD]"} disabled:bg-gray-300 disabled:cursor-not-allowed hover:opacity-90`}
         >
           {added ? <><CheckCircle2 size={13} /><span>تمت الإضافة</span></> : !product.inStock ? <span>غير متوفر</span> : <><ShoppingCart size={13} /><span>أضف للسلة</span></>}
         </button>
