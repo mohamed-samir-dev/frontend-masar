@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ShoppingCart, CheckCircle2 } from "lucide-react";
@@ -32,15 +32,15 @@ function ProductCard({ product, priority = false, highlightColor }: { product: P
     const idx = product.variants.findIndex((v) => v.color === highlightColor);
     if (idx >= 0) setActiveVariantIdx(idx);
   }, [highlightColor, product.variants]);
-  const initialStorageIdx = (() => {
-    const storageOpts = product.variants?.[0]?.storageOptions;
-    if (!storageOpts) return 0;
-    const match = product.name.match(/(\d+(?:GB|TB))/i);
-    if (!match) return 0;
-    const idx = storageOpts.findIndex(o => o.storage.toLowerCase() === match[1].toLowerCase());
-    return idx >= 0 ? idx : 0;
-  })();
-  const [activeStorageIdx, setActiveStorageIdx] = useState(initialStorageIdx);
+  const getDefaultStorageIdx = (variant: ProductVariant | undefined) => {
+    if (!variant?.storageOptions) return 0;
+    if (variant.defaultStorage) {
+      const idx = variant.storageOptions.findIndex(o => o.storage === variant.defaultStorage);
+      if (idx >= 0) return idx;
+    }
+    return 0;
+  };
+  const [activeStorageIdx, setActiveStorageIdx] = useState(() => getDefaultStorageIdx(product.variants?.[0]));
   const [added, setAdded] = useState(false);
 
   const activeVariant: ProductVariant | undefined = hasVariants ? product.variants![activeVariantIdx] : undefined;
@@ -131,7 +131,7 @@ function ProductCard({ product, priority = false, highlightColor }: { product: P
           <div className="flex gap-1.5 items-center">
             {product.variants!.map((v, i) => (
               <button key={v.color} title={v.color}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); const currentStorage = activeVariant?.storageOptions?.[activeStorageIdx]?.storage; const newIdx = product.variants![i].storageOptions?.findIndex(o => o.storage === currentStorage) ?? 0; setActiveStorageIdx(newIdx >= 0 ? newIdx : 0); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); setActiveStorageIdx(getDefaultStorageIdx(product.variants![i])); }}
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 transition-transform duration-150 cursor-pointer ${activeVariantIdx === i ? "border-[#0B43FD] scale-110 shadow-[0_0_0_2px_rgba(11,67,253,0.25)]" : "border-gray-300"}`}
                 style={{ backgroundColor: v.colorCode }}
               />

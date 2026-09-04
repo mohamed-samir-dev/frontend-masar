@@ -7,6 +7,7 @@ export interface StorageOption {
 export interface ProductVariant {
   color: string;
   colorCode: string;
+  defaultStorage?: string;
   images: string[];
   storageOptions: StorageOption[];
 }
