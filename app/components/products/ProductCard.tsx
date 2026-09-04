@@ -44,7 +44,8 @@ function ProductCard({ product, priority = false, highlightColor }: { product: P
   const [added, setAdded] = useState(false);
 
   const activeVariant: ProductVariant | undefined = hasVariants ? product.variants![activeVariantIdx] : undefined;
-  const activeStorageOpt = activeVariant?.storageOptions?.[activeStorageIdx];
+  const allStorageOptions = product.variants?.[0]?.storageOptions ?? [];
+  const activeStorageOpt = allStorageOptions[activeStorageIdx];
 
   const baseName = product.name.replace(/\d+GB|\d+TB/gi, "").replace(/\s{2,}/g, " ").trim();
   const selectedColorName = activeVariant?.color ?? product.color ?? "";
@@ -131,7 +132,7 @@ function ProductCard({ product, priority = false, highlightColor }: { product: P
           <div className="flex gap-1.5 items-center">
             {product.variants!.map((v, i) => (
               <button key={v.color} title={v.color}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); setActiveStorageIdx(getDefaultStorageIdx(product.variants![i])); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); }}
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 transition-transform duration-150 cursor-pointer ${activeVariantIdx === i ? "border-[#0B43FD] scale-110 shadow-[0_0_0_2px_rgba(11,67,253,0.25)]" : "border-gray-300"}`}
                 style={{ backgroundColor: v.colorCode }}
               />
@@ -140,9 +141,9 @@ function ProductCard({ product, priority = false, highlightColor }: { product: P
         )}
 
         {/* Storage */}
-        {activeVariant?.storageOptions && activeVariant.storageOptions.length > 1 && (
+        {allStorageOptions.length > 1 && (
           <div className="flex flex-wrap gap-1">
-            {activeVariant.storageOptions.map((opt, i) => (
+            {allStorageOptions.map((opt, i) => (
               <button key={opt.storage}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveStorageIdx(i); }}
                 className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[11px] font-bold border cursor-pointer transition-colors duration-150 ${activeStorageIdx === i ? "bg-[#0B43FD] text-white border-[#0B43FD]" : "bg-white text-[#0B43FD] border-[#0B43FD]/30"}`}
