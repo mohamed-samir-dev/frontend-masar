@@ -2,103 +2,148 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { IoChevronBack, IoChevronForward, IoExpand } from "react-icons/io5";
+import { motion, AnimatePresence } from "framer-motion";
 
-interface ProductImagesProps {
+interface Props {
   images: string[];
   name: string;
   discountPercent?: number;
 }
 
-export default function ProductImages({ images, name, discountPercent = 0 }: ProductImagesProps) {
+export default function ProductImages({ images, name, discountPercent = 0 }: Props) {
   const [sel, setSel] = useState(0);
-  const [zoomed, setZoomed] = useState(false);
   const touchX = useRef(0);
 
   const go = (d: number) => setSel((s) => (s + d + images.length) % images.length);
 
   return (
-    <div className="flex flex-col gap-3 sm:gap-4">
-      {/* Main Image */}
-      <div
-        className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-white shadow-lg shadow-black/[.06] group"
-        style={{ aspectRatio: "1/1" }}
-        onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
-        onTouchEnd={(e) => {
-          const d = touchX.current - e.changedTouches[0].clientX;
-          if (Math.abs(d) > 40) go(d > 0 ? 1 : -1);
-        }}
-      >
-        {/* Badges */}
-        <div className="absolute z-10 top-3 right-3 sm:top-4 sm:right-4 flex flex-col gap-2">
-          {discountPercent > 0 && (
-            <div className="bg-red-600 text-white text-[10px] sm:text-xs font-extrabold px-3 py-1.5 rounded-xl shadow-lg shadow-red-600/30 text-center">
-              خصم {discountPercent}%
-            </div>
-          )}
-        </div>
-
-        {/* Zoom toggle */}
-        <button onClick={() => setZoomed(!zoomed)} className="absolute z-10 top-3 left-3 sm:top-4 sm:left-4 w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-black/5 backdrop-blur-sm flex items-center justify-center text-gray-500 hover:bg-black/10 transition">
-          <IoExpand size={16} />
-        </button>
-
-        {/* Image */}
-        {images.length > 0 ? (
-          <div className={`w-full h-full transition-transform duration-500 ${zoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"}`} onClick={() => setZoomed(!zoomed)}>
-            <Image
-              src={images[sel]}
-              alt={name}
-              fill
-              className="object-contain p-8 sm:p-12"
-              priority
-              sizes="(max-width:1024px) 100vw, 58vw"
-            />
+    <>
+      {/* Mobile: column layout */}
+      <div className="flex flex-col gap-3 lg:hidden" dir="rtl">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-gray-50 via-white to-blue-50/40" />
+          <div
+            className="relative rounded-2xl overflow-hidden border border-gray-100 shadow-xl shadow-black/8"
+            style={{ aspectRatio: "1/1" }}
+            onTouchStart={(e) => { touchX.current = e.touches[0].clientX; }}
+            onTouchEnd={(e) => {
+              const d = touchX.current - e.changedTouches[0].clientX;
+              if (Math.abs(d) > 40) go(d > 0 ? 1 : -1);
+            }}
+          >
+            {discountPercent > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute top-3 left-3 z-10 bg-gradient-to-br from-red-500 to-rose-600 text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-lg shadow-red-500/40"
+              >
+                خصم {discountPercent}%
+              </motion.div>
+            )}
+            {images.length > 1 && (
+              <div className="absolute top-3 right-3 z-10 bg-black/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-lg">
+                {sel + 1} / {images.length}
+              </div>
+            )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={sel}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"
+              >
+                {images.length > 0 ? (
+                  <Image src={images[sel]} alt={name} fill priority className="object-contain p-6" sizes="100vw" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-200 text-7xl">📱</div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-300 text-6xl">📱</div>
-        )}
-
-        {/* Arrows */}
+        </div>
         {images.length > 1 && (
-          <>
-            <button onClick={() => go(1)} className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white">
-              <IoChevronBack size={18} />
-            </button>
-            <button onClick={() => go(-1)} className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md flex items-center justify-center text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white">
-              <IoChevronForward size={18} />
-            </button>
-          </>
-        )}
-
-        {/* Dots */}
-        {images.length > 1 && (
-          <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, i) => (
-              <button key={i} onClick={() => setSel(i)} className={`rounded-full transition-all duration-300 ${i === sel ? "w-6 h-2 bg-[#1F7A8C]" : "w-2 h-2 bg-gray-300 hover:bg-gray-400"}`} />
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {images.slice(0, 6).map((img, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setSel(i)}
+                whileTap={{ scale: 0.92 }}
+                className={`relative flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden transition-all duration-200 ${
+                  i === sel
+                    ? "ring-2 ring-[#0B43FD] ring-offset-1 shadow-md shadow-[#0B43FD]/20"
+                    : "bg-white border border-gray-100 opacity-50 hover:opacity-90"
+                }`}
+              >
+                <div className={`absolute inset-0 ${i === sel ? "bg-[#0B43FD]/5" : "bg-white"}`} />
+                <Image src={img} alt="" fill className="object-contain p-1.5" />
+              </motion.button>
             ))}
           </div>
         )}
       </div>
 
-      {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="flex gap-2 sm:gap-3 justify-center px-2">
-          {images.map((img, i) => (
-            <button
-              key={i}
-              onClick={() => setSel(i)}
-              className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 bg-white ${
-                i === sel
-                  ? "ring-2 ring-[#1F7A8C] ring-offset-2 shadow-lg scale-105"
-                  : "border border-gray-200 opacity-50 hover:opacity-100 hover:border-[#1F7A8C]/30"
-              }`}
-            >
-              <Image src={img} alt="" fill className="object-contain p-2" />
-            </button>
-          ))}
+      {/* Desktop: thumbnails on the side */}
+      <div className="hidden lg:flex gap-3 h-full" dir="rtl">
+        {images.length > 1 && (
+          <div className="flex flex-col gap-2 w-[60px] shrink-0">
+            {images.slice(0, 6).map((img, i) => (
+              <motion.button
+                key={i}
+                onClick={() => setSel(i)}
+                whileTap={{ scale: 0.92 }}
+                className={`relative w-full aspect-square rounded-xl overflow-hidden transition-all duration-200 ${
+                  i === sel
+                    ? "ring-2 ring-[#0B43FD] ring-offset-1 shadow-md shadow-[#0B43FD]/20"
+                    : "bg-white border border-gray-100 opacity-50 hover:opacity-90"
+                }`}
+              >
+                <div className={`absolute inset-0 ${i === sel ? "bg-[#0B43FD]/5" : "bg-white"}`} />
+                <Image src={img} alt="" fill className="object-contain p-1.5" />
+              </motion.button>
+            ))}
+          </div>
+        )}
+        <div className="flex-1 relative">
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-gray-50 via-white to-blue-50/40" />
+          <div
+            className="relative rounded-3xl overflow-hidden border border-gray-100 shadow-xl shadow-black/8"
+            style={{ aspectRatio: "1/1" }}
+          >
+            {discountPercent > 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="absolute top-3 left-3 z-10 bg-gradient-to-br from-red-500 to-rose-600 text-white text-[11px] font-black px-2.5 py-1 rounded-xl shadow-lg shadow-red-500/40"
+              >
+                خصم {discountPercent}%
+              </motion.div>
+            )}
+            {images.length > 1 && (
+              <div className="absolute top-3 right-3 z-10 bg-black/20 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-lg">
+                {sel + 1} / {images.length}
+              </div>
+            )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={sel}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"
+              >
+                {images.length > 0 ? (
+                  <Image src={images[sel]} alt={name} fill priority className="object-contain p-10" sizes="50vw" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-200 text-7xl">📱</div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }

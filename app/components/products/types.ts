@@ -11,6 +11,39 @@ export interface ProductVariant {
   storageOptions: StorageOption[];
 }
 
+export interface SectionMedia {
+  _id?: string;
+  type: "image" | "video" | "poster";
+  url: string;
+  urlMobile?: string;
+  poster?: string;
+  alt?: string;
+  title?: string;
+  sortOrder?: number;
+}
+
+export type SectionType =
+  | "design" | "colors" | "camera" | "zoom" | "low_light" | "front_camera"
+  | "video" | "performance" | "cooling" | "battery" | "software" | "ai"
+  | "safety" | "accessories" | "comparison" | "custom";
+
+export interface ProductSection {
+  _id: string;
+  type: SectionType;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  content?: Record<string, unknown>;
+  media?: SectionMedia[];
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export interface SpecGroup {
+  group: string;
+  items: { key: string; value: string }[];
+}
+
 export interface Product {
   _id: string;
   name: string;
@@ -40,6 +73,8 @@ export interface Product {
     os?: string;
     extras?: string;
   };
+  specGroups?: SpecGroup[];
+  sections?: ProductSection[];
   freeDelivery: boolean;
   deliveryTime: string;
   warrantyYears: number;

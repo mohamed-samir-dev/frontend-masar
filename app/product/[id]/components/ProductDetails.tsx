@@ -1,210 +1,173 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Icon } from "@iconify/react";
 import type { Product } from "../../../components/products/types";
 
-const fmt = (n: number) => n.toLocaleString("ar-SA");
-
-const specLabels: [keyof NonNullable<Product["specs"]>, string, string][] = [
-  ["screen",       "الشاشة",            "solar:smartphone-2-bold"],
-  ["processor",    "المعالج",           "solar:cpu-bolt-bold"],
-  ["ram",          "الرام",             "solar:database-bold"],
-  ["storage",      "التخزين",           "solar:hard-drive-bold"],
-  ["rearCamera",   "الكاميرا الخلفية",  "solar:camera-bold"],
-  ["frontCamera",  "الكاميرا الأمامية", "solar:user-rounded-bold"],
-  ["battery",      "البطارية",          "solar:battery-full-bold"],
-  ["batteryLife",  "عمر البطارية",      "solar:clock-circle-bold"],
-  ["charging",     "الشحن",             "solar:bolt-bold"],
-  ["os",           "نظام التشغيل",      "solar:settings-bold"],
-  ["extras",       "مميزات إضافية",     "solar:star-bold"],
-];
-
-interface ProductDetailsProps {
-  installment?: Product["installment"];
-  description?: string;
-  specs?: Product["specs"];
-}
-
-type Tab = "specs" | "installment" | "description";
-
-const tabMeta: Record<Tab, { icon: string; label: string; color: string }> = {
-  specs:       { icon: "solar:list-bold",          label: "المواصفات", color: "#1F7A8C" },
-  description: { icon: "solar:document-text-bold", label: "الوصف",     color: "#6DBE00" },
-  installment: { icon: "solar:card-bold",          label: "التقسيط",   color: "#f59e0b" },
+const GROUP_META: Record<string, { icon: string; color: string }> = {
+  "الشاشة":   { icon: "solar:monitor-smartphone-bold-duotone", color: "#0B43FD" },
+  "الأداء":   { icon: "solar:cpu-bolt-bold-duotone",           color: "#7c3aed" },
+  "الكاميرا": { icon: "solar:camera-bold-duotone",             color: "#0891b2" },
+  "البطارية": { icon: "solar:battery-charge-bold-duotone",     color: "#059669" },
+  "الاتصال":  { icon: "solar:wifi-router-bold-duotone",        color: "#d97706" },
+  "التصميم":  { icon: "solar:pen-new-square-bold-duotone",     color: "#db2777" },
 };
 
-export default function ProductDetails({ installment, description, specs }: ProductDetailsProps) {
-  const hasSpecs = specs && Object.values(specs).some(Boolean);
+const SPEC_ICONS: Record<string, string> = {
+  "النوع":           "solar:display-bold-duotone",
+  "الحجم":           "solar:ruler-bold-duotone",
+  "الدقة":           "solar:eye-bold-duotone",
+  "معدل التحديث":    "solar:refresh-circle-bold-duotone",
+  "المعالج":         "solar:cpu-bold-duotone",
+  "الرام":           "solar:database-bold-duotone",
+  "التخزين":         "solar:hard-drive-bold-duotone",
+  "نظام التشغيل":    "solar:settings-bold-duotone",
+  "الرئيسية":        "solar:camera-bold-duotone",
+  "الزاوية الواسعة": "solar:camera-add-bold-duotone",
+  "تيليفوتو 5x":     "solar:telescope-bold-duotone",
+  "الأمامية":        "solar:user-rounded-bold-duotone",
+  "الشحن السلكي":    "solar:bolt-bold-duotone",
+  "الشحن اللاسلكي":  "solar:wi-fi-bold-duotone",
+  "عمر البطارية":    "solar:clock-circle-bold-duotone",
+};
 
-  const tabs: { key: Tab; show: boolean }[] = [
-    { key: "specs",       show: !!hasSpecs },
-    { key: "description", show: !!description },
-    { key: "installment", show: !!installment?.available },
-  ];
-  const visibleTabs = tabs.filter((t) => t.show);
-  const [active, setActive] = useState<Tab>(visibleTabs[0]?.key || "specs");
+interface Props {
+  description?: string;
+  specGroups?: { group: string; items: { key: string; value: string }[] }[];
+  installment?: Product["installment"];
+}
 
-  if (!visibleTabs.length) return null;
+export default function ProductDetails({ description, specGroups, installment }: Props) {
+  const hasSpecs = specGroups && specGroups.length > 0;
+  const [activeGroup, setActiveGroup] = useState(0);
+  const fmt = (n: number) => n.toLocaleString("ar-SA");
 
   return (
-    <div className="mt-6 sm:mt-10" dir="rtl">
-      {/* Tab buttons */}
-      <div className="flex gap-2 sm:gap-3 mb-4 overflow-x-auto scrollbar-hide pb-1">
-        {visibleTabs.map((t) => {
-          const m = tabMeta[t.key];
-          const isActive = active === t.key;
-          return (
-            <button
-              key={t.key}
-              onClick={() => setActive(t.key)}
-              className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all duration-200 border ${
-                isActive
-                  ? "bg-[#155E6F] text-white border-[#155E6F] shadow-md shadow-[#155E6F]/20"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-[#155E6F]/40 hover:text-[#155E6F]"
-              }`}
-            >
-              <Icon icon={m.icon} width={15} />
-              {m.label}
-            </button>
-          );
-        })}
-      </div>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.15 }}
+      className="mt-8"
+      dir="rtl"
+    >
 
-      {/* Panel */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* ── SPECS hidden ── */}
+      {false && hasSpecs && (
+        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden mb-4">
 
-        {/* ── Specs ── */}
-        {active === "specs" && hasSpecs && (
-          <div>
-            {/* header */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-l from-[#f0fdf9] to-white">
-              <div className="w-9 h-9 rounded-xl bg-[#155E6F]/10 flex items-center justify-center">
-                <Icon icon="solar:list-bold" width={18} className="text-[#155E6F]" />
-              </div>
-              <div>
-                <p className="text-sm font-extrabold text-gray-800">المواصفات التقنية</p>
-                <p className="text-[11px] text-gray-400">تفاصيل كاملة للمنتج</p>
-              </div>
-            </div>
-            {/* rows */}
-            <div className="divide-y divide-gray-50">
-              {specLabels.map(([key, label, iconName]) =>
-                specs[key] ? (
-                  <div key={key} className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#f8fafb] transition-colors">
-                    <div className="w-8 h-8 rounded-lg bg-[#155E6F]/8 flex items-center justify-center shrink-0">
-                      <Icon icon={iconName} width={15} className="text-[#1F7A8C]" />
-                    </div>
-                    <span className="text-[11px] sm:text-xs text-gray-400 w-24 sm:w-32 shrink-0 font-semibold">{label}</span>
-                    <span className="text-xs sm:text-sm text-gray-800 flex-1 font-semibold leading-snug">{specs[key]}</span>
-                  </div>
-                ) : null
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── Description ── */}
-        {active === "description" && description && (() => {
-          const lines = description.split("\n").map(l => l.trim()).filter(Boolean);
-          const title = lines[0];
-          const items = lines.slice(1);
-          return (
-            <div>
-              {/* header */}
-              <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-l from-[#f4fde8] to-white">
-                <div className="w-9 h-9 rounded-xl bg-[#6DBE00]/15 flex items-center justify-center">
-                  <Icon icon="solar:document-text-bold" width={18} className="text-[#6DBE00]" />
-                </div>
-                <div>
-                  <p className="text-sm font-extrabold text-gray-800">{title || "وصف المنتج"}</p>
-                  <p className="text-[11px] text-gray-400">مميزات وتفاصيل</p>
-                </div>
-              </div>
-              {/* items */}
-              {items.length > 0 && (
-                <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {items.map((line, i) => (
-                    <div key={i} className="flex items-start gap-3 bg-[#f8fafb] rounded-xl px-4 py-3 border border-gray-100">
-                      <div className="w-6 h-6 rounded-lg bg-[#6DBE00]/15 flex items-center justify-center shrink-0 mt-0.5">
-                        <Icon icon="solar:check-circle-bold" width={14} className="text-[#6DBE00]" />
-                      </div>
-                      <span className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
-                        {line.replace(/^[•\-\*]\s*/, "")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* warning */}
-              <div className="mx-4 sm:mx-5 mb-5 flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                <Icon icon="solar:danger-triangle-bold" width={18} className="text-amber-500 shrink-0" />
-                <p className="text-[11px] sm:text-xs font-semibold text-amber-700">عدم استيفاء أي من الشروط أعلاه قد يؤدي إلى رفض الطلب</p>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* ── Installment ── */}
-        {active === "installment" && installment?.available && (
-          <div>
-            {/* header */}
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-l from-[#fffbeb] to-white">
-              <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center">
-                <Icon icon="solar:card-bold" width={18} className="text-amber-500" />
-              </div>
-              <div>
-                <p className="text-sm font-extrabold text-gray-800">التقسيط الميسر</p>
-                <p className="text-[11px] text-gray-400">أقساط شهرية مريحة بدون تعقيد</p>
-              </div>
-            </div>
-
-            <div className="p-4 sm:p-5 space-y-4">
-              {/* highlight card */}
-              <div className="flex items-center gap-4 bg-gradient-to-l from-[#f0fbe4] to-[#f7fdf0] rounded-2xl p-4 border border-[#6DBE00]/20">
-                <div className="w-11 h-11 rounded-xl bg-[#6DBE00]/20 flex items-center justify-center shrink-0">
-                  <Icon icon="solar:wallet-money-bold" width={22} className="text-[#4fa800]" />
-                </div>
-                <div>
-                  <p className="text-sm font-extrabold text-[#3d6b1a]">احصل عليه الآن بالتقسيط</p>
-                  {installment.downPayment && (
-                    <p className="text-xs text-[#6DBE00] font-semibold mt-0.5">مقدم {fmt(installment.downPayment)} ر.س فقط</p>
+          {/* Group tabs */}
+          <div className="flex border-b border-gray-100 overflow-x-auto scrollbar-hide">
+            {specGroups!.map((group, gi) => {
+              const meta = GROUP_META[group.group] ?? { icon: "solar:list-bold-duotone", color: "#0B43FD" };
+              const isActive = activeGroup === gi;
+              return (
+                <button
+                  key={gi}
+                  onClick={() => setActiveGroup(gi)}
+                  className="relative flex items-center gap-2 px-5 py-4 text-sm font-bold whitespace-nowrap cursor-pointer transition-colors shrink-0"
+                  style={{ color: isActive ? meta.color : "#9ca3af" }}
+                >
+                  <Icon icon={meta.icon} width={16} />
+                  {group.group}
+                  {isActive && (
+                    <motion.div
+                      layoutId="spec-tab-line"
+                      className="absolute bottom-0 inset-x-0 h-0.5 rounded-full"
+                      style={{ background: meta.color }}
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                    />
                   )}
-                  {installment.note && <p className="text-[11px] text-gray-500 mt-0.5">{installment.note}</p>}
-                </div>
-              </div>
+                </button>
+              );
+            })}
+          </div>
 
-              {/* policy */}
-              {installment.policy && (
-                <div className="flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                  <Icon icon="solar:crown-bold" width={16} className="text-amber-500 shrink-0" />
-                  <span className="text-xs sm:text-sm font-bold text-amber-700">{installment.policy}</span>
-                </div>
-              )}
+          {/* Table */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeGroup}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.28 }}
+            >
+              {(() => {
+                const group = specGroups![activeGroup];
+                const meta = GROUP_META[group.group] ?? { color: "#0B43FD" };
+                const items = group.items;
+                // pair items: every 2 items in one row
+                const rows: typeof items[] = [];
+                for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
 
-              {/* conditions */}
-              {installment.conditions && installment.conditions.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon icon="solar:clipboard-list-bold" width={15} className="text-gray-400" />
-                    <p className="text-xs font-bold text-gray-500">شروط التقديم</p>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {installment.conditions.map((c, i) => (
-                      <div key={i} className="flex items-start gap-3 bg-[#f8fafb] rounded-xl px-4 py-3 border border-gray-100">
-                        <div className="w-5 h-5 rounded-md bg-[#1F7A8C]/10 flex items-center justify-center shrink-0 mt-0.5">
-                          <Icon icon="solar:check-circle-bold" width={13} className="text-[#1F7A8C]" />
-                        </div>
-                        <span className="text-xs sm:text-sm text-gray-600 leading-relaxed">{c}</span>
+                return (
+                  <div className="divide-y divide-gray-50">
+                    {rows.map((pair, ri) => (
+                      <div key={ri} className="grid grid-cols-2 divide-x divide-x-reverse divide-gray-50">
+                        {pair.map((item, ci) => (
+                          <div key={ci} className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50/60 transition-colors">
+                            <div
+                              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                              style={{ background: `${meta.color}12` }}
+                            >
+                              <Icon
+                                icon={SPEC_ICONS[item.key] ?? "solar:star-bold-duotone"}
+                                width={16}
+                                style={{ color: meta.color }}
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[10px] text-gray-400 font-semibold mb-0.5">{item.key}</p>
+                              <p className="text-sm font-black text-gray-900 truncate">{item.value}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {/* if odd item, fill empty cell */}
+                        {pair.length === 1 && <div />}
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
-            </div>
+                );
+              })()}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      )}
+
+      {/* ── INSTALLMENT ── */}
+      {installment?.available && (
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+            <Icon icon="solar:card-recive-bold-duotone" width={20} className="text-[#5a9030]" />
+            <p className="text-sm font-black text-gray-800">التقسيط الميسر</p>
           </div>
-        )}
-      </div>
-    </div>
+          <div className="p-5 space-y-3">
+            <div className="flex items-center gap-4 bg-[#f0fbe4] rounded-2xl p-4">
+              <Icon icon="solar:wallet-money-bold-duotone" width={22} className="text-[#4fa800] shrink-0" />
+              <div>
+                <p className="text-sm font-black text-[#3d6b1a]">احصل عليه الآن بالتقسيط</p>
+                {installment.downPayment && (
+                  <p className="text-xs text-[#6DBE00] font-bold mt-0.5">مقدم {fmt(installment.downPayment)} ر.س فقط</p>
+                )}
+                {installment.note && <p className="text-[11px] text-gray-500 mt-0.5">{installment.note}</p>}
+              </div>
+            </div>
+            {installment.conditions?.map((c, i) => (
+              <div key={i} className="flex items-start gap-3 bg-gray-50 rounded-xl px-4 py-3">
+                <Icon icon="solar:check-circle-bold-duotone" width={15} className="text-[#0B43FD] shrink-0 mt-0.5" />
+                <span className="text-xs text-gray-600 leading-relaxed">{c}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {description && <span className="hidden">{description}</span>}
+    </motion.div>
   );
 }

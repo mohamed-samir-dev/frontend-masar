@@ -2,199 +2,247 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { IoCartOutline, IoCheckmarkCircle, IoShieldCheckmark, IoTimeOutline, IoCarOutline, IoCheckmarkDoneCircle, IoFlash, IoStorefront } from "react-icons/io5";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  IoCartOutline, IoCheckmarkDoneCircle, IoFlash,
+  IoStarSharp, IoCheckmarkCircle, IoShieldCheckmarkOutline,
+  IoCarOutline, IoLockClosedOutline,
+} from "react-icons/io5";
 import type { Product } from "../../../components/products/types";
+import { useCartStore } from "../../../store/cartStore";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
-interface ProductInfoProps {
+interface Props {
   product: Product;
-  addedToCart: boolean;
-  onAddToCart: () => void;
   selectedColor: string;
   selectedStorage: string;
   onColorChange: (c: string) => void;
   onStorageChange: (s: string) => void;
 }
 
-export default function ProductInfo({ product, addedToCart, onAddToCart, selectedColor, selectedStorage, onColorChange, onStorageChange }: ProductInfoProps) {
+export default function ProductInfo({ product, selectedColor, selectedStorage, onColorChange, onStorageChange }: Props) {
   const router = useRouter();
+  const addItem = useCartStore((s) => s.addItem);
+  const [added, setAdded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
+  const [popup, setPopup] = useState(false);
+
+  const { name, brand, salePrice, originalPrice = 0, taxIncluded, installment, freeDelivery, inStock } = product;
+  const hasDiscount = salePrice != null && salePrice !== originalPrice;
+  const savings = hasDiscount ? originalPrice - (salePrice ?? 0) : 0;
+  const discountPct = hasDiscount ? Math.round((savings / originalPrice) * 100) : 0;
+  const activeVariant = product.variants?.find((v) => v.color === selectedColor);
+  const storageOpts = activeVariant?.storageOptions ?? [];
 
   const handleAdd = () => {
     setLoading(true);
     setTimeout(() => {
+      addItem(product);
       setLoading(false);
-      onAddToCart();
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3000);
-    }, 600);
+      setAdded(true);
+      setPopup(true);
+      setTimeout(() => setPopup(false), 3000);
+    }, 500);
   };
-  const { name, brand, color, storage, network, salePrice, taxIncluded, installment, freeDelivery, deliveryTime, inStock } = product;
-  const originalPrice = product.originalPrice ?? 0;
-  const hasDiscount = salePrice != null && salePrice !== originalPrice;
 
   return (
-    <div className="flex flex-col gap-3 sm:gap-4">
-      {/* Price Card */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-lg shadow-black/[.04] border border-gray-100/80">
-        {/* Stock */}
-        <div className="flex items-center justify-between mb-4">
-          <div className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg ${inStock ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"}`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-red-500"}`} />
-            {inStock ? "متوفر الآن" : "غير متوفر"}
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+      dir="rtl"
+    >
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-lg shadow-black/[.06] overflow-hidden">
+        <div className="p-3.5 sm:p-4 flex flex-col gap-3">
+
+          {/* Brand + Stock */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {brand && (
+                brand.toLowerCase() === "apple" ? (
+                  <div className="flex items-center gap-1 bg-gray-900 px-2.5 py-1 rounded-lg">
+                    <img src="/ebe10e4a-ea76-4c7f-bff8-a89fde550082.svg" alt="Apple" className="w-2.5 h-3 brightness-0 invert" />
+                    <span className="text-[11px] font-black text-white tracking-wide">Apple</span>
+                  </div>
+                ) : (
+                  <span className="text-[11px] font-black text-[#0B43FD] bg-[#0B43FD]/8 px-2.5 py-1 rounded-lg tracking-wide">
+                    {brand}
+                  </span>
+                )
+              )}
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <IoStarSharp key={i} size={9} className={i < 4 ? "text-amber-400" : "text-gray-200"} />
+                ))}
+                <span className="text-[10px] text-gray-400 mr-1">4.8</span>
+              </div>
+            </div>
+            <span className={`flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg ${
+              inStock ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${inStock ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`} />
+              {inStock ? "متوفر" : "غير متوفر"}
+            </span>
           </div>
-          {brand && (
-            <span className="text-[10px] sm:text-xs font-bold text-[#1F7A8C] bg-[#1F7A8C]/8 px-3 py-1.5 rounded-lg">{brand}</span>
+
+          {/* Name */}
+          <h1 className="text-sm font-black text-gray-900 leading-snug">{name}</h1>
+
+          <div className="h-px bg-gray-100" />
+
+          {/* Colors */}
+          {product.variants && product.variants.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-gray-400 shrink-0">اللون</span>
+              <div className="flex gap-2">
+                {product.variants.map((v) => (
+                  <motion.button
+                    key={v.color}
+                    title={v.color}
+                    whileTap={{ scale: 0.88 }}
+                    onClick={() => { onColorChange(v.color); onStorageChange(v.storageOptions?.[0]?.storage ?? ""); }}
+                    className={`relative w-6 h-6 rounded-full border-2 cursor-pointer transition-all duration-200 ${
+                      selectedColor === v.color
+                        ? "border-[#0B43FD] shadow-[0_0_0_2px_rgba(11,67,253,0.15)]"
+                        : "border-white shadow-md"
+                    }`}
+                    style={{ backgroundColor: v.colorCode }}
+                  >
+                    {selectedColor === v.color && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <IoCheckmarkCircle size={12} className="text-white drop-shadow" />
+                      </span>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+              <span className="text-[11px] text-gray-600 font-semibold">{selectedColor}</span>
+            </div>
           )}
-        </div>
 
-        {/* Name */}
-        <h2 className="text-lg sm:text-xl lg:text-2xl font-black text-gray-900 leading-relaxed mb-3">{name}</h2>
-
-        {/* Color Variants */}
-        {product.variants && product.variants.length > 1 && (
-          <div className="mb-3">
-            <p className="text-xs font-bold text-gray-500 mb-2">اللون: <span className="text-gray-800">{selectedColor}</span></p>
-            <div className="flex gap-2">
-              {product.variants.map((v) => (
-                <button key={v.color} title={v.color}
-                  onClick={() => { onColorChange(v.color); onStorageChange(v.storageOptions?.[0]?.storage ?? ""); }}
-                  className={`w-7 h-7 rounded-full border-2 transition-transform duration-150 cursor-pointer ${
-                    selectedColor === v.color ? "border-[#1F7A8C] scale-110 shadow-[0_0_0_2px_rgba(31,122,140,0.25)]" : "border-gray-300"
-                  }`}
-                  style={{ backgroundColor: v.colorCode }}
-                />
-              ))}
+          {/* Storage */}
+          {storageOpts.length > 1 && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[11px] font-bold text-gray-400 shrink-0">السعة</span>
+              <div className="flex gap-1.5 flex-wrap">
+                {storageOpts.map((opt) => (
+                  <motion.button
+                    key={opt.storage}
+                    whileTap={{ scale: 0.94 }}
+                    onClick={() => onStorageChange(opt.storage)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-black border cursor-pointer transition-all duration-150 ${
+                      selectedStorage === opt.storage
+                        ? "bg-[#0B43FD] text-white border-[#0B43FD] shadow-sm shadow-[#0B43FD]/20"
+                        : "bg-gray-50 text-gray-500 border-gray-200 hover:border-gray-300"
+                    }`}
+                  >
+                    {opt.storage}
+                  </motion.button>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Storage Options */}
-        {product.variants?.find((v) => v.color === selectedColor)?.storageOptions?.length! > 1 && (
-          <div className="mb-3">
-            <p className="text-xs font-bold text-gray-500 mb-2">السعة: <span className="text-gray-800">{selectedStorage}</span></p>
-            <div className="flex flex-wrap gap-2">
-              {product.variants!.find((v) => v.color === selectedColor)!.storageOptions.map((opt) => (
-                <button key={opt.storage}
-                  onClick={() => onStorageChange(opt.storage)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border cursor-pointer transition-colors duration-150 ${
-                    selectedStorage === opt.storage ? "bg-[#1F7A8C] text-white border-[#1F7A8C]" : "bg-white text-[#1F7A8C] border-[#1F7A8C]/30"
-                  }`}
-                >
-                  {opt.storage}
-                </button>
-              ))}
+          <div className="h-px bg-gray-100" />
+
+          {/* Price */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${selectedColor}-${selectedStorage}`}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center gap-2 flex-wrap"
+            >
+              <span className="text-2xl font-black text-gray-900 leading-none">
+                {fmt(salePrice ?? originalPrice)}
+              </span>
+              <span className="text-[11px] font-bold text-gray-400">ر.س</span>
+              {hasDiscount && (
+                <>
+                  <span className="text-[11px] text-gray-400 line-through">{fmt(originalPrice)}</span>
+                  <span className="text-[10px] font-black text-white bg-red-500 px-1.5 py-0.5 rounded-md">
+                    -{discountPct}%
+                  </span>
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
+
+          {taxIncluded && (
+            <p className="text-[10px] text-gray-400 -mt-1">شامل ضريبة القيمة المضافة 15%</p>
+          )}
+
+          {/* Installment */}
+          {installment?.available && (
+            <div className="flex items-center gap-2 bg-[#f7fdf0] rounded-xl px-3 py-2 border border-[#7CC043]/20">
+              <IoFlash size={12} className="text-[#5a9030] shrink-0" />
+              <p className="text-[11px] font-black text-[#3d6b1a]">
+                تقسيط متاح {installment.downPayment ? `• مقدم ${fmt(installment.downPayment)} ر.س` : ""}
+              </p>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tags */}
-        {(color || storage || network) && (
-          <div className="flex gap-2 mb-5 flex-wrap">
-            {[color, storage, network].filter(Boolean).map((t, i) => (
-              <span key={i} className="text-[10px] sm:text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-lg">{t}</span>
+          {/* Trust */}
+          <div className="flex items-center justify-between gap-2">
+            {[
+              { icon: IoShieldCheckmarkOutline, label: "ضمان سنتين",  color: "#059669" },
+              { icon: IoCarOutline,             label: freeDelivery ? "توصيل مجاني" : "توصيل سريع", color: "#0B43FD" },
+              { icon: IoLockClosedOutline,       label: "دفع آمن",     color: "#7c3aed" },
+            ].map((b, i) => (
+              <div key={i} className="flex items-center gap-1">
+                <b.icon size={12} style={{ color: b.color }} />
+                <span className="text-[11px] font-bold text-gray-500">{b.label}</span>
+              </div>
             ))}
           </div>
-        )}
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-l from-transparent via-gray-200 to-transparent mb-5" />
+          {/* CTA — shown always */}
+          <div className="relative">
+            <AnimatePresence>
+              {popup && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute -top-11 inset-x-0 z-20"
+                >
+                  <div className="bg-[#0B43FD] rounded-xl px-3 py-2 shadow-lg flex items-center gap-2">
+                    <IoCheckmarkDoneCircle size={14} className="text-white shrink-0" />
+                    <span className="text-[11px] font-bold text-white">تمت الإضافة للسلة ✓</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        {/* Price */}
-        <div className="flex items-end gap-3 flex-wrap">
-          {hasDiscount ? (
-            <>
-              <span className="text-3xl sm:text-4xl font-black text-red-600 leading-none">{fmt(salePrice)}</span>
-              <span className="text-sm font-bold text-red-600/70 mb-1">ر.س</span>
-              <div className="flex items-center gap-2 mr-2">
-                <span className="text-sm text-gray-400 line-through">{fmt(originalPrice)}</span>
-                <span className="text-[10px] sm:text-xs font-extrabold text-white bg-red-500 px-2.5 py-1 rounded-lg shadow-sm shadow-red-500/20">
-                  وفّر {fmt(originalPrice - salePrice)}
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <span className="text-3xl sm:text-4xl font-black text-red-600 leading-none">{fmt(originalPrice)}</span>
-              <span className="text-sm font-bold text-red-600/70 mb-1">ر.س</span>
-            </>
-          )}
+            <motion.button
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.975 }}
+              onClick={added ? () => router.push("/cart") : handleAdd}
+              disabled={loading}
+              className={`w-full font-black text-sm py-3 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70 ${
+                added
+                  ? "bg-emerald-600 text-white shadow-emerald-500/20"
+                  : "bg-[#0B43FD] text-white shadow-[#0B43FD]/20"
+              }`}
+            >
+              {loading ? (
+                <svg className="animate-spin" width={15} height={15} viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" strokeWidth="3" />
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
+                </svg>
+              ) : added ? (
+                <><IoCartOutline size={15} /> عرض السلة</>
+              ) : (
+                <><IoCartOutline size={15} /> أضف للسلة</>
+              )}
+            </motion.button>
+          </div>
+
         </div>
-        {taxIncluded && <p className="text-[10px] sm:text-xs text-gray-400 mt-2">شامل ضريبة القيمة المضافة</p>}
-
-        {/* Installment */}
-        {installment?.available && (
-          <div className="mt-4 bg-gradient-to-l from-[#f0fbe4] to-[#f7fdf0] rounded-2xl px-4 py-3.5 border border-[#7CC043]/15">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#7CC043]/15 flex items-center justify-center shrink-0">
-                <IoFlash size={16} className="text-[#5a9030]" />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm text-[#3d6b1a] font-bold">
-                  تقسيط متاح {installment.downPayment ? `• مقدم ${fmt(installment.downPayment)} ر.س` : ""}
-                </p>
-                {installment.note && <p className="text-[10px] sm:text-xs text-[#7CC043] mt-0.5">{installment.note}</p>}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-
-      {/* Features */}
-      <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
-        {[
-          { icon: IoCarOutline, label: freeDelivery ? "توصيل مجاني" : "توصيل مدفوع", sub: deliveryTime, accent: "#1F7A8C" },
-          { icon: IoShieldCheckmark, label: "ضمان حاسبات العرب", sub: "سنتين", accent: "#0d4a5e" },
-          { icon: IoStorefront, label: inStock ? "متوفر بالمخزون" : "غير متوفر", sub: null, accent: inStock ? "#16a34a" : "#dc2626" },
-          { icon: IoTimeOutline, label: "شحن سريع", sub: "خلال 24-48 ساعة", accent: "#7c3aed" },
-        ].map((f, i) => (
-          <div key={i} className="bg-white rounded-2xl p-3.5 sm:p-4 shadow-sm border border-gray-100/80 flex items-center gap-3 hover:shadow-md hover:border-gray-200 transition-all">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${f.accent}12` }}>
-              <f.icon size={18} style={{ color: f.accent }} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[11px] sm:text-xs font-bold text-gray-800 leading-snug">{f.label}</p>
-              {f.sub && <p className="text-[9px] sm:text-[10px] text-gray-400 mt-0.5">{f.sub}</p>}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Cart */}
-      <div className="relative">
-        {/* Popup */}
-        {showPopup && (
-          <div className="absolute -top-14 left-0 right-0 z-20 pdp-popup">
-            <div className="bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] rounded-2xl px-4 py-3 shadow-lg shadow-[#1a6b7d]/30 flex items-center gap-3">
-              <IoCheckmarkDoneCircle size={18} className="text-white shrink-0" />
-              <span className="text-sm font-bold text-white">تمت إضافة المنتج للسلة بنجاح</span>
-            </div>
-          </div>
-        )}
-
-        <button
-          onClick={handleAdd}
-          disabled={loading || addedToCart}
-          className="product-page-cart-btn group w-full disabled:opacity-80"
-        >
-          <span className="product-page-cart-btn-shine" />
-          <span className="relative z-10 flex items-center justify-center gap-2.5">
-            {loading ? (
-              <svg className="animate-spin" width={22} height={22} viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" strokeWidth="3" />
-                <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
-              </svg>
-            ) : addedToCart ? (
-              <><IoCartOutline size={22} /> عرض السلة</>
-            ) : (
-              <><IoCartOutline size={22} className="transition-transform group-hover:scale-110" /> أضف للسلة</>
-            )}
-          </span>
-        </button>
-
-      </div>
-    </div>
+    </motion.div>
   );
 }

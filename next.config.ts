@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
       { hostname: "i.ibb.co" },
       { protocol: "https", hostname: "albilaad-ksa.com" },
       { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "placehold.co" },
     ],
   },
 };

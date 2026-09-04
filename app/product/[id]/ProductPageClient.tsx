@@ -3,71 +3,68 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { IoArrowForward, IoShareSocial, IoHomeOutline, IoCartOutline, IoCheckmarkDoneCircle } from "react-icons/io5";
+import { motion } from "framer-motion";
+import { IoArrowForward, IoShareSocial, IoHomeOutline } from "react-icons/io5";
 import type { Product } from "../../components/products/types";
-import { useCartStore } from "../../store/cartStore";
 import ProductImages from "./components/ProductImages";
 import ProductInfo from "./components/ProductInfo";
 import ProductDetails from "./components/ProductDetails";
+import ProductSections from "./components/ProductSections";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-export default function ProductPageClient({ 
-  id, 
+export default function ProductPageClient({
+  id,
   initialProduct,
   initialColor,
-  initialStorage 
-}: { 
-  id: string; 
+  initialStorage,
+}: {
+  id: string;
   initialProduct: Product | null;
   initialColor?: string;
   initialStorage?: string;
 }) {
   const router = useRouter();
-  const [product] = useState<Product | null>(initialProduct);
-  const [addedToCart, setAddedToCart] = useState(false);
-  const [mobileLoading, setMobileLoading] = useState(false);
-  const [mobilePopup, setMobilePopup] = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
 
-  const firstVariant = initialProduct?.variants?.[0];
-  
-  // Use initialColor/initialStorage from URL if provided, otherwise use first variant
+  const product = initialProduct;
+  const firstVariant = product?.variants?.[0];
+
   const [selectedColor, setSelectedColor] = useState<string>(() => {
     if (initialColor) {
-      // Check if this color exists in variants
-      const colorExists = initialProduct?.variants?.some(v => v.color === initialColor);
-      return colorExists ? initialColor : (firstVariant?.color ?? initialProduct?.color ?? "");
+      const exists = product?.variants?.some((v) => v.color === initialColor);
+      return exists ? initialColor : (firstVariant?.color ?? product?.color ?? "");
     }
-    return firstVariant?.color ?? initialProduct?.color ?? "";
+    return firstVariant?.color ?? product?.color ?? "";
   });
-  
+
   const [selectedStorage, setSelectedStorage] = useState<string>(() => {
     if (initialStorage) {
-      // Find the variant for selected color
-      const variant = initialProduct?.variants?.find(v => v.color === selectedColor);
-      // Check if this storage exists in the variant
-      const storageExists = variant?.storageOptions?.some(s => s.storage === initialStorage);
-      return storageExists ? initialStorage : (firstVariant?.storageOptions?.[0]?.storage ?? initialProduct?.storage ?? "");
+      const variant = product?.variants?.find((v) => v.color === selectedColor);
+      const exists = variant?.storageOptions?.some((s) => s.storage === initialStorage);
+      return exists ? initialStorage : (firstVariant?.storageOptions?.[0]?.storage ?? product?.storage ?? "");
     }
-    return firstVariant?.storageOptions?.[0]?.storage ?? initialProduct?.storage ?? "";
+    return firstVariant?.storageOptions?.[0]?.storage ?? product?.storage ?? "";
   });
 
   if (!product)
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-400 text-lg">المنتج غير موجود</p></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f4f6f8]">
+        <p className="text-gray-400 text-lg">المنتج غير موجود</p>
+      </div>
+    );
 
   const activeVariant = product.variants?.find((v) => v.color === selectedColor);
   const activeStorage = activeVariant?.storageOptions?.find((s) => s.storage === selectedStorage);
 
-  // Build dynamic display name: replace storage in name or append color+storage
-  const baseName = product.name.replace(/\d+GB|\d+TB/gi, "").replace(/\s{2,}/g, " ").trim();
-  const displayName = selectedColor || selectedStorage
-    ? `${baseName}${selectedStorage ? " – " + selectedStorage : ""}${selectedColor ? " | " + selectedColor : ""}`
-    : product.name;
+  const resolveImg = (src: string) => src.startsWith("http") ? src : `${API}${src}`;
+
+  const merged = activeVariant?.images?.length
+    ? activeVariant.images
+    : [...(product.images ?? []), ...(product.image ? [product.image] : [])];
+  const allImages = [...new Set(merged)].map(resolveImg);
 
   const displayProduct: Product = {
     ...product,
-    name: displayName,
     color: selectedColor || product.color,
     storage: selectedStorage || product.storage,
     originalPrice: activeStorage?.originalPrice ?? product.originalPrice,
@@ -76,134 +73,79 @@ export default function ProductPageClient({
     images: activeVariant?.images?.length ? activeVariant.images : product.images,
   };
 
-  const handleMobileAdd = () => {
-    setMobileLoading(true);
-    setTimeout(() => {
-      setMobileLoading(false);
-      addItem(displayProduct);
-      setAddedToCart(true);
-      setMobilePopup(true);
-      setTimeout(() => setMobilePopup(false), 3000);
-    }, 600);
-  };
-
-  const resolveImg = (src: string) =>
-    src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
-  const merged = [
-    ...(activeVariant?.images || []),
-    ...(product.images || []),
-    ...(product.image ? [product.image] : []),
-  ];
-  const allImages = [...new Set(merged)].map(resolveImg);
+  const discountPct =
+    displayProduct.salePrice != null && displayProduct.salePrice !== displayProduct.originalPrice
+      ? Math.round(((displayProduct.originalPrice - displayProduct.salePrice) / displayProduct.originalPrice) * 100)
+      : 0;
 
   const handleShare = async () => {
     try { await navigator.share({ title: product.name, url: window.location.href }); } catch {}
   };
 
   return (
-    <>
-      <main className="min-h-screen pb-24 sm:pb-16" dir="rtl" style={{ background: "#f4f6f8" }}>
-        {/* Sticky Nav / Breadcrumb */}
-        <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-          <div className="max-w-6xl mx-auto px-3 sm:px-5 py-3 flex items-center justify-between gap-3">
-            {/* Back + Breadcrumb */}
-            <div className="flex items-center gap-2 min-w-0">
-              <button
-                onClick={() => router.back()}
-                className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] text-white shadow-md shadow-[#1a6b7d]/30 active:scale-95 transition-transform"
-              >
-                <IoArrowForward size={18} />
-              </button>
-              <nav className="flex items-center min-w-0" aria-label="breadcrumb">
-                <Link href="/" className="flex items-center gap-1 text-gray-500 hover:text-[#1a6b7d] transition-colors text-xs sm:text-sm flex-shrink-0">
-                  <IoHomeOutline size={14} />
-                  <span>الرئيسية</span>
-                </Link>
-                <span className="breadcrumb-sep flex-shrink-0" />
-                <span className="text-xs sm:text-sm font-semibold text-gray-800 truncate">{product.name}</span>
-              </nav>
-            </div>
-            {/* Share */}
+    <main className="min-h-screen pb-10" dir="rtl" style={{ background: "#f4f6f8" }}>
+
+      {/* NAV */}
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+        <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <button
-              onClick={handleShare}
-              className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] text-white shadow-md shadow-[#1a6b7d]/30 active:scale-95 transition-transform"
-              title="مشاركة"
+              onClick={() => router.back()}
+              className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-[#0B43FD] text-white shadow-md shadow-[#0B43FD]/30 active:scale-95 transition-transform"
             >
-              <IoShareSocial size={16} />
+              <IoArrowForward size={16} />
             </button>
+            <nav className="flex items-center gap-1 min-w-0 text-xs">
+              <Link href="/" className="flex items-center gap-1 text-gray-400 hover:text-[#0B43FD] transition-colors shrink-0">
+                <IoHomeOutline size={12} />
+                <span className="hidden sm:inline">الرئيسية</span>
+              </Link>
+              <span className="text-gray-300 shrink-0">/</span>
+              <span className="font-bold text-gray-700 truncate text-xs sm:text-sm">{product.name}</span>
+            </nav>
+          </div>
+          <button
+            onClick={handleShare}
+            className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0 flex items-center justify-center rounded-xl bg-[#0B43FD] text-white shadow-md shadow-[#0B43FD]/30 active:scale-95 transition-transform"
+          >
+            <IoShareSocial size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 mt-3 sm:mt-5">
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-5 lg:gap-7">
+          <motion.div
+            className="lg:col-span-7"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+          >
+            <ProductImages images={allImages} name={product.name} discountPercent={discountPct} />
+          </motion.div>
+
+          <div className="lg:col-span-5">
+            <ProductInfo
+              product={displayProduct}
+              selectedColor={selectedColor}
+              selectedStorage={selectedStorage}
+              onColorChange={(c) => setSelectedColor(c)}
+              onStorageChange={(s) => setSelectedStorage(s)}
+            />
           </div>
         </div>
 
-        {/* Content */}
-        <div className="max-w-6xl mx-auto px-3 sm:px-5 mt-4 sm:mt-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-7">
-            {/* Images */}
-            <div className="lg:col-span-7 pdp-scale">
-              <ProductImages images={allImages} name={product.name} discountPercent={product.discountPercent} />
-            </div>
-            {/* Info */}
-            <div className="lg:col-span-5 pdp-scale" style={{ animationDelay: ".1s" }}>
-              <ProductInfo
-                product={displayProduct}
-                addedToCart={addedToCart}
-                onAddToCart={() => { addItem(displayProduct); setAddedToCart(true); }}
-                selectedColor={selectedColor}
-                selectedStorage={selectedStorage}
-                onColorChange={(c) => { setSelectedColor(c); setAddedToCart(false); }}
-                onStorageChange={(s) => { setSelectedStorage(s); setAddedToCart(false); }}
-              />
-            </div>
-          </div>
+        <ProductDetails
+          description={displayProduct.description}
+          specGroups={displayProduct.specGroups}
+          installment={displayProduct.installment}
+        />
 
-          <ProductDetails installment={displayProduct.installment} description={displayProduct.description} specs={displayProduct.specs} />
-        </div>
+        <ProductSections sections={displayProduct.sections} />
+      </div>
 
-        {/* Mobile Floating CTA */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 lg:hidden" dir="rtl">
-          {/* Mobile Popup */}
-          {mobilePopup && (
-            <div className="mx-4 mb-2 pdp-popup">
-              <div className="bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] rounded-2xl px-4 py-3 shadow-lg shadow-[#1a6b7d]/30 flex items-center gap-3">
-                <IoCheckmarkDoneCircle size={18} className="text-white shrink-0" />
-                <span className="text-sm font-bold text-white">تمت إضافة المنتج للسلة بنجاح</span>
-              </div>
-            </div>
-          )}
-          <div className="bg-white/95 backdrop-blur-xl border-t border-gray-200 px-4 py-3 safe-bottom">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-gray-500 truncate">{displayName}</p>
-                <p className="text-base font-black text-red-600">{(displayProduct.salePrice ?? displayProduct.originalPrice ?? 0).toLocaleString("en-US")} <span className="text-xs font-bold">ر.س</span></p>
-              </div>
-              {!addedToCart ? (
-                <button
-                  onClick={handleMobileAdd}
-                  disabled={mobileLoading}
-                  className="bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] text-white font-bold text-sm px-7 py-3 rounded-xl shadow-lg shadow-[#1a6b7d]/30 active:scale-95 transition-transform flex items-center gap-2 disabled:opacity-80"
-                >
-                  {mobileLoading ? (
-                    <svg className="animate-spin" width={18} height={18} viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,.3)" strokeWidth="3" />
-                      <path d="M12 2a10 10 0 0 1 10 10" stroke="white" strokeWidth="3" strokeLinecap="round" />
-                    </svg>
-                  ) : (
-                    <><IoCartOutline size={18} /> أضف للسلة</>
-                  )}
-                </button>
-              ) : (
-                <button onClick={() => router.push("/cart")} className="bg-gradient-to-l from-[#1a6b7d] to-[#155e6f] text-white font-bold text-sm px-7 py-3 rounded-xl shadow-lg shadow-[#1a6b7d]/30 active:scale-95 transition-transform flex items-center gap-2">
-                  <IoCartOutline size={18} /> عرض السلة
-                </button>
-              )}
-            </div>
-          </div>
-          <style>{`
-            @keyframes popupIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
-            @keyframes shimmer{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
-            @keyframes shrink{from{width:100%}to{width:0%}}
-          `}</style>
-        </div>
-      </main>
-    </>
+    </main>
   );
 }
