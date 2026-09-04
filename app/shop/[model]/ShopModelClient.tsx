@@ -67,10 +67,23 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
     return [...set].sort((a, b) => parseInt(a) - parseInt(b));
   }, [products]);
 
-  const maxPrice = useMemo(
-    () => Math.max(...products.map((p) => p.originalPrice ?? p.price ?? 0), 0),
-    [products]
-  );
+  const maxPrice = useMemo(() => {
+    let max = 0;
+    products.forEach((p) => {
+      if (p.variants?.length) {
+        p.variants.forEach((v) =>
+          v.storageOptions?.forEach((s) => {
+            const price = s.salePrice ?? s.originalPrice;
+            if (price > max) max = price;
+          })
+        );
+      } else {
+        const price = p.salePrice ?? p.originalPrice ?? p.price ?? 0;
+        if (price > max) max = price;
+      }
+    });
+    return max;
+  }, [products]);
 
   // ── Apply filters ─────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -94,8 +107,14 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
 
     if (priceRange) {
       list = list.filter((p) => {
-        const price = p.salePrice ?? p.originalPrice ?? p.price ?? 0;
-        return price >= priceRange[0] && price <= priceRange[1];
+        const prices: number[] = [];
+        if (p.variants?.length) {
+          p.variants.forEach((v) =>
+            v.storageOptions?.forEach((s) => prices.push(s.salePrice ?? s.originalPrice))
+          );
+        }
+        if (!prices.length) prices.push(p.salePrice ?? p.originalPrice ?? p.price ?? 0);
+        return prices.some((price) => price >= priceRange[0] && price <= priceRange[1]);
       });
     }
 
@@ -410,7 +429,7 @@ export default function ShopModelClient({ products, modelName, hero = [] }: Prop
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
             {paginated.map((p, i) => (
-              <ProductCard key={p._id} product={p} priority={i < 4} />
+              <ProductCard key={p._id} product={p} priority={i < 4} highlightColor={selectedColors[0]} />
             ))}
           </div>
         )}

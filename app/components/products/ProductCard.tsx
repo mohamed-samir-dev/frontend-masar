@@ -18,10 +18,29 @@ const resolveImg = (src: string) => {
   return `${API}${src.startsWith("/") ? src : "/" + src}`;
 };
 
-function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+function ProductCard({ product, priority = false, highlightColor }: { product: Product; priority?: boolean; highlightColor?: string }) {
   const hasVariants = product.variants && product.variants.length > 0;
-  const [activeVariantIdx, setActiveVariantIdx] = useState(0);
-  const [activeStorageIdx, setActiveStorageIdx] = useState(0);
+  const initialVariantIdx = (() => {
+    if (!highlightColor || !product.variants) return 0;
+    const idx = product.variants.findIndex((v) => v.color === highlightColor);
+    return idx >= 0 ? idx : 0;
+  })();
+  const [activeVariantIdx, setActiveVariantIdx] = useState(initialVariantIdx);
+
+  useEffect(() => {
+    if (!highlightColor || !product.variants) return;
+    const idx = product.variants.findIndex((v) => v.color === highlightColor);
+    if (idx >= 0) setActiveVariantIdx(idx);
+  }, [highlightColor, product.variants]);
+  const initialStorageIdx = (() => {
+    const storageOpts = product.variants?.[0]?.storageOptions;
+    if (!storageOpts) return 0;
+    const match = product.name.match(/(\d+(?:GB|TB))/i);
+    if (!match) return 0;
+    const idx = storageOpts.findIndex(o => o.storage.toLowerCase() === match[1].toLowerCase());
+    return idx >= 0 ? idx : 0;
+  })();
+  const [activeStorageIdx, setActiveStorageIdx] = useState(initialStorageIdx);
   const [added, setAdded] = useState(false);
 
   const activeVariant: ProductVariant | undefined = hasVariants ? product.variants![activeVariantIdx] : undefined;
@@ -112,7 +131,7 @@ function ProductCard({ product, priority = false }: { product: Product; priority
           <div className="flex gap-1.5 items-center">
             {product.variants!.map((v, i) => (
               <button key={v.color} title={v.color}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); setActiveStorageIdx(0); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveVariantIdx(i); const currentStorage = activeVariant?.storageOptions?.[activeStorageIdx]?.storage; const newIdx = product.variants![i].storageOptions?.findIndex(o => o.storage === currentStorage) ?? 0; setActiveStorageIdx(newIdx >= 0 ? newIdx : 0); }}
                 className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 transition-transform duration-150 cursor-pointer ${activeVariantIdx === i ? "border-[#0B43FD] scale-110 shadow-[0_0_0_2px_rgba(11,67,253,0.25)]" : "border-gray-300"}`}
                 style={{ backgroundColor: v.colorCode }}
               />
