@@ -149,7 +149,7 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
           {/* Price */}
           <AnimatePresence mode="wait">
             <motion.div
-              key={`${selectedColor}-${selectedStorage}`}
+              key={`${salePrice ?? originalPrice}`}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
