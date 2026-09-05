@@ -79,7 +79,7 @@ const MODEL_MAP: Record<
     label: "آيفون 16 برو ماكس",
     keywords: ["16 برو ماكس", "16 pro max", "16promax"],
     hero: [
-      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637971/9cd62627-fd84-4452-9451-c8b38fe20910.webp", title: "آيفون 16 برو ماكس", subtitle: "قوة استثنائية في تصميم احترافي.", highlight: "احترافي" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643540/251e0223-4981-4028-b0b6-6b966832abce.webp", title: "آيفون 16 برو ماكس", subtitle: "قوة استثنائية في تصميم احترافي.", highlight: "احترافي" },
     ],
   },
   "16-pro": {

@@ -33,7 +33,7 @@ function ProductCard({ product, priority = false }: { product: Product; priority
   const [added, setAdded] = useState(false);
 
   const activeVariant: ProductVariant | undefined = hasVariants ? product.variants![activeVariantIdx] : undefined;
-  const allStorageOptions = product.variants?.[0]?.storageOptions ?? [];
+  const allStorageOptions = (hasVariants ? activeVariant?.storageOptions : undefined) ?? product.variants?.[0]?.storageOptions ?? [];
   const activeStorageOpt = allStorageOptions[activeStorageIdx];
 
   const baseName = product.name.replace(/\d+GB|\d+TB/gi, "").replace(/\s{2,}/g, " ").trim();
@@ -133,7 +133,7 @@ function ProductCard({ product, priority = false }: { product: Product; priority
         {allStorageOptions.length > 1 && (
           <div className="flex flex-wrap gap-1">
             {allStorageOptions.map((opt, i) => (
-              <button key={opt.storage}
+              <button key={`${activeVariantIdx}-${opt.storage}`}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveStorageIdx(i); }}
                 className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md sm:rounded-lg text-[9px] sm:text-[11px] font-bold border cursor-pointer transition-colors duration-150 ${activeStorageIdx === i ? "bg-[#0B43FD] text-white border-[#0B43FD]" : "bg-white text-[#0B43FD] border-[#0B43FD]/30"}`}
               >

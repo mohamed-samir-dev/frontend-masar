@@ -35,8 +35,8 @@ const PRODUCTS: Product[] = [
     subtitle: "iPhone 17 Pro Max",
     colors: [
       { name: "برتقالي", value: "#F07B2C", image: "/iphone-17-promax/iphone17promax-org.webp" },
-      { name: "سيلفر",   value: "#F5F5F5", image: "/iphone-17-promax/iphone-17promax-silver.webp" },
-      { name: "أزرق",    value: "#32374A", image: "/iphone-17-promax/iphone1-promax-blu.webp" },
+      { name: "سيلفر", value: "#F5F5F5", image: "/iphone-17-promax/iphone-17promax-silver.webp" },
+      { name: "أزرق", value: "#32374A", image: "/iphone-17-promax/iphone1-promax-blu.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -45,9 +45,9 @@ const PRODUCTS: Product[] = [
     name: "آيفون 17 برو",
     subtitle: "iPhone 17 Pro",
     colors: [
-      { name: "سيلفر",   value: "#F5F5F5", image: "/iphone-17-promax/iphone-17promax-silver.webp" },
+      { name: "سيلفر", value: "#F5F5F5", image: "/iphone-17-promax/iphone-17promax-silver.webp" },
       { name: "برتقالي", value: "#F07B2C", image: "/iphone-17-promax/iphone17promax-org.webp" },
-      { name: "أزرق",    value: "#32374A", image: "/iphone-17-promax/iphone1-promax-blu.webp" },
+      { name: "أزرق", value: "#32374A", image: "/iphone-17-promax/iphone1-promax-blu.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -56,10 +56,10 @@ const PRODUCTS: Product[] = [
     name: "آيفون 17 إير",
     subtitle: "iPhone 17 Air",
     colors: [
-      { name: "أبيض",   value: "#FFFFFF", image: "/iphone-17-air/i-white.webp" },
-      { name: "أسود",   value: "#000000", image: "/iphone-17-air/i-black.webp" },
-      { name: "ذهبي",   value: "#e4a017", image: "/iphone-17-air/i-gold.webp" },
-      { name: "سماوي",  value: "#96AED1F", image: "/iphone-17-air/i-blue.webp" },
+      { name: "أبيض", value: "#FFFFFF", image: "/iphone-17-air/i-white.webp" },
+      { name: "أسود", value: "#000000", image: "/iphone-17-air/i-black.webp" },
+      { name: "ذهبي", value: "#e4a017", image: "/iphone-17-air/i-gold.webp" },
+      { name: "سماوي", value: "#96AED1F", image: "/iphone-17-air/i-blue.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -68,10 +68,10 @@ const PRODUCTS: Product[] = [
     name: "آيفون 17",
     subtitle: "iPhone 17",
     colors: [
-      { name: "وردي",  value: "#C9ADDC", image: "/iphone-17/i-pink.webp" },
-      { name: "أخضر",  value: "#A6B286", image: "/iphone-17/i-green.webp" },
-      { name: "أبيض",  value: "#FFFFFF", image: "/iphone-17/i-white.webp" },
-      { name: "أسود",  value: "#000000", image: "/iphone-17/i-black.webp" },
+      { name: "وردي", value: "#C9ADDC", image: "/iphone-17/i-pink.webp" },
+      { name: "أخضر", value: "#A6B286", image: "/iphone-17/i-green.webp" },
+      { name: "أبيض", value: "#FFFFFF", image: "/iphone-17/i-white.webp" },
+      { name: "أسود", value: "#000000", image: "/iphone-17/i-black.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -80,9 +80,9 @@ const PRODUCTS: Product[] = [
     name: "آيفون 16 برو ماكس",
     subtitle: "iPhone 16 Pro Max",
     colors: [
-      { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "/iphone-16-pro-max/i-1.webp" },
-      { name: "تيتانيوم طبيعي ", value: "#9A9A9A", image: "/iphone-16-pro-max/i-2.webp" },
-      {  name: "تيتانيوم ابيض ",value: "#E5E5E0", image: "/iphone-16-pro-max/i-3.webp" },
+      { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637968/1ad27298-5aa7-4ebf-8335-4b2a106c8442.webp" },
+      { name: "تيتانيوم طبيعي", value: "#9A9A9A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637034/4b33df43-b486-4c3a-9b2e-8f7970925505.webp" },
+      { name: "تيتانيوم أبيض", value: "#E5E5E0", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788636870/16aee900-ceb3-48e3-b3e9-119a44739507.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -91,9 +91,9 @@ const PRODUCTS: Product[] = [
     name: "آيفون 16 برو",
     subtitle: "iPhone 16 Pro",
     colors: [
-     { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "/iphone-16-pro-max/i-1.webp" },
-      { name: "تيتانيوم طبيعي ", value: "#9A9A9A", image: "/iphone-16-pro-max/i-2.webp" },
-      {  name: "تيتانيوم ابيض ",value: "#E5E5E0", image: "/iphone-16-pro-max/i-3.webp" },
+      { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637968/1ad27298-5aa7-4ebf-8335-4b2a106c8442.webp" },
+      { name: "تيتانيوم طبيعي", value: "#9A9A9A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637034/4b33df43-b486-4c3a-9b2e-8f7970925505.webp" },
+      { name: "تيتانيوم أبيض", value: "#E5E5E0", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788636870/16aee900-ceb3-48e3-b3e9-119a44739507.webp" },
     ],
     storage: ["128GB", "256GB", "512GB"],
   },
@@ -102,7 +102,11 @@ const PRODUCTS: Product[] = [
     name: "آيفون 16 بلس",
     subtitle: "iPhone 16 Plus",
     colors: [
-      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+      { name: "أسود", value: "#1D1D1F", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643537/c3022b9b-9702-4421-85d1-0861710a3fee.webp" },
+      { name: "أبيض", value: "#F5F5F0", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643538/d55b764c-e695-428a-99c9-a0768cd173e7.webp" },
+      { name: "وردي", value: "#F2C6D2", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643539/7bba49c7-f75e-4a42-a2cf-bff4ce3f6f9e.webp" },
+      { name: "أخضر مزرق", value: "#4D8B87", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643537/e5241fbd-5d6a-4011-a5d7-8dda50c6e722.webp" },
+      { name: "أزرق فوق بحري", value: "#243C7A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643540/251e0223-4981-4028-b0b6-6b966832abce.webp" },
     ],
     storage: ["128GB", "256GB", "512GB"],
   },
@@ -111,7 +115,11 @@ const PRODUCTS: Product[] = [
     name: "آيفون 16",
     subtitle: "iPhone 16",
     colors: [
-      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+       { name: "أسود", value: "#1D1D1F", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643537/c3022b9b-9702-4421-85d1-0861710a3fee.webp" },
+      { name: "أبيض", value: "#F5F5F0", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643538/d55b764c-e695-428a-99c9-a0768cd173e7.webp" },
+      { name: "وردي", value: "#F2C6D2", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643539/7bba49c7-f75e-4a42-a2cf-bff4ce3f6f9e.webp" },
+      { name: "أخضر مزرق", value: "#4D8B87", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643537/e5241fbd-5d6a-4011-a5d7-8dda50c6e722.webp" },
+      { name: "أزرق فوق بحري", value: "#243C7A", image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643540/251e0223-4981-4028-b0b6-6b966832abce.webp" },
     ],
     storage: ["128GB", "256GB", "512GB"],
   },
@@ -120,7 +128,10 @@ const PRODUCTS: Product[] = [
     name: "آيفون 15 برو ماكس",
     subtitle: "iPhone 15 Pro Max",
     colors: [
-      { name: "تيتانيوم أسود", value: "#4A4A4A", image: "/iphone-17-promax/iphone17promax-org.webp" },
+      { name: "تيتانيوم أسود", value: "#3C3C3D", image: "/iphone-15-pro-max/i-1.webp" },
+      { name: "تيتانيوم أبيض", value: "#E5E5E0", image: "/iphone-15-pro-max/i-2.webp" },
+      { name: "تيتانيوم أزرق", value: "#394C63", image: "/iphone-15-pro-max/i-3.webp" },
+      { name: "تيتانيوم طبيعي", value: "#9A9A9A", image: "/iphone-15-pro-max/i-4.webp" },
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
@@ -129,16 +140,10 @@ const PRODUCTS: Product[] = [
     name: "آيفون 15 برو",
     subtitle: "iPhone 15 Pro",
     colors: [
-      { name: "تيتانيوم أسود", value: "#4A4A4A", image: "/iphone-17-promax/iphone17promax-org.webp" },
-    ],
-    storage: ["128GB", "256GB", "512GB"],
-  },
-  {
-    id: "15-plus",
-    name: "آيفون 15 بلس",
-    subtitle: "iPhone 15 Plus",
-    colors: [
-      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+      { name: "تيتانيوم أسود", value: "#3C3C3D", image: "/iphone-15-pro-max/i-1.webp" },
+      { name: "تيتانيوم أبيض", value: "#E5E5E0", image: "/iphone-15-pro-max/i-2.webp" },
+      { name: "تيتانيوم أزرق", value: "#394C63", image: "/iphone-15-pro-max/i-3.webp" },
+      { name: "تيتانيوم طبيعي", value: "#9A9A9A", image: "/iphone-15-pro-max/i-4.webp" },
     ],
     storage: ["128GB", "256GB", "512GB"],
   },
@@ -147,8 +152,11 @@ const PRODUCTS: Product[] = [
     name: "آيفون 15",
     subtitle: "iPhone 15",
     colors: [
-      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
-    ],
+      { name: "أسود", value: "#1D1D1F", image: "/iphone-15/i-1.webp" },
+      { name: "أزرق", value: "#A7C7E7", image: "/iphone-15/i-2.webp" },
+      { name: "أخضر", value: "#B8D8C0", image: "/iphone-15/i-3.webp" },
+      { name: "أصفر", value: "#F4E6A3", image: "/iphone-15/i-4.webp" },
+      { name: "وردي", value: "#F6C5D0", image: "/iphone-15/i-5.webp" },],
     storage: ["128GB", "256GB", "512GB"],
   },
   {
@@ -238,11 +246,10 @@ function ProductCard({ product }: { product: Product }) {
               onClick={() => handleColorChange(i)}
               aria-label={`اللون ${c.name}`}
               aria-pressed={activeColor === i}
-              className={`rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 ${
-                activeColor === i
+              className={`rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0B43FD] focus-visible:ring-offset-2 ${activeColor === i
                   ? "w-4 h-4 xs:w-5 xs:h-5 ring-2 ring-[#0B43FD] ring-offset-2 scale-110"
                   : "w-3.5 h-3.5 xs:w-4 xs:h-4 hover:scale-110 hover:ring-2 hover:ring-[#0B43FD]/30 hover:ring-offset-1"
-              }`}
+                }`}
               style={{ backgroundColor: c.value, boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.1)" }}
             />
           ))}
@@ -334,13 +341,13 @@ export default function ShopByModel() {
           slidesPerView={1.2}
           spaceBetween={12}
           breakpoints={{
-            0:    { slidesPerView: 1.5,  spaceBetween: 10 },
-            350:  { slidesPerView: 1.65, spaceBetween: 10 },
-            400:  { slidesPerView: 1.85, spaceBetween: 12 },
-            480:  { slidesPerView: 2.2,  spaceBetween: 14 },
-            640:  { slidesPerView: 2.7,  spaceBetween: 18 },
-            900:  { slidesPerView: 3.2,  spaceBetween: 20 },
-            1200: { slidesPerView: 4,    spaceBetween: 22 },
+            0: { slidesPerView: 1.5, spaceBetween: 10 },
+            350: { slidesPerView: 1.65, spaceBetween: 10 },
+            400: { slidesPerView: 1.85, spaceBetween: 12 },
+            480: { slidesPerView: 2.2, spaceBetween: 14 },
+            640: { slidesPerView: 2.7, spaceBetween: 18 },
+            900: { slidesPerView: 3.2, spaceBetween: 20 },
+            1200: { slidesPerView: 4, spaceBetween: 22 },
           }}
           className="!overflow-visible"
         >
