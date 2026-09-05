@@ -75,6 +75,76 @@ const MODEL_MAP: Record<
      
     ],
   },
+  "16-pro-max": {
+    label: "آيفون 16 برو ماكس",
+    keywords: ["16 برو ماكس", "16 pro max", "16promax"],
+    hero: [
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788637971/9cd62627-fd84-4452-9451-c8b38fe20910.webp", title: "آيفون 16 برو ماكس", subtitle: "قوة استثنائية في تصميم احترافي.", highlight: "احترافي" },
+    ],
+  },
+  "16-pro": {
+    label: "آيفون 16 برو",
+    keywords: ["16 برو", "16 pro"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16 برو", subtitle: "أداء احترافي في حجم مثالي.", highlight: "احترافي" },
+    ],
+  },
+  "16-plus": {
+    label: "آيفون 16 بلس",
+    keywords: ["16 بلس", "16 plus"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16 بلس", subtitle: "شاشة كبيرة وبطارية تدوم أطول.", highlight: "بطارية تدوم" },
+    ],
+  },
+  "16": {
+    label: "آيفون 16",
+    keywords: ["ايفون 16", "آيفون 16", "iphone 16"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16", subtitle: "تجربة iPhone الجديدة بالكامل.", highlight: "الجديدة" },
+    ],
+  },
+  "15-pro-max": {
+    label: "آيفون 15 برو ماكس",
+    keywords: ["15 برو ماكس", "15 pro max", "15promax"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 برو ماكس", subtitle: "تيتانيوم. قوة. احتراف.", highlight: "تيتانيوم" },
+    ],
+  },
+  "15-pro": {
+    label: "آيفون 15 برو",
+    keywords: ["15 برو", "15 pro"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 برو", subtitle: "تيتانيوم خفيف وأداء لا يُضاهى.", highlight: "تيتانيوم" },
+    ],
+  },
+  "15-plus": {
+    label: "آيفون 15 بلس",
+    keywords: ["15 بلس", "15 plus"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 بلس", subtitle: "شاشة ضخمة وبطارية استثنائية.", highlight: "بطارية استثنائية" },
+    ],
+  },
+  "15": {
+    label: "آيفون 15",
+    keywords: ["ايفون 15", "آيفون 15", "iphone 15"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15", subtitle: "Dynamic Island وكاميرا 48MP.", highlight: "Dynamic Island" },
+    ],
+  },
+  "14-pro-max": {
+    label: "آيفون 14 برو ماكس",
+    keywords: ["14 برو ماكس", "14 pro max", "14promax"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 14 برو ماكس", subtitle: "Dynamic Island لأول مرة.", highlight: "Dynamic Island" },
+    ],
+  },
+  "14-pro": {
+    label: "آيفون 14 برو",
+    keywords: ["14 برو", "14 pro"],
+    hero: [
+      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 14 برو", subtitle: "شاشة Always-On وكاميرا 48MP.", highlight: "Always-On" },
+    ],
+  },
   "17": {
     label: "آيفون 17",
     keywords: ["ايفون 17", "آيفون 17", "iphone 17"],
@@ -137,25 +207,29 @@ export default async function ShopModelPage({
     );
   });
 
-  const filtered =
-    model === "17-pro"
-      ? products.filter(
-          (p) =>
-            !(p.name || "").toLowerCase().includes("ماكس") &&
-            !(p.name || "").toLowerCase().includes("max")
-        )
-      : model === "17"
-      ? products.filter((p) => {
-          const name = (p.name || "").toLowerCase();
-          return (
-            !name.includes("برو") &&
-            !name.includes("pro") &&
-            !name.includes("اير") &&
-            !name.includes("إير") &&
-            !name.includes("air")
-          );
-        })
-      : products;
+  const proOnlyModels = ["17-pro", "16-pro", "15-pro", "14-pro"];
+  const baseOnlyModels = ["17", "16", "15"];
+
+  const filtered = proOnlyModels.includes(model)
+    ? products.filter(
+        (p) =>
+          !(p.name || "").toLowerCase().includes("ماكس") &&
+          !(p.name || "").toLowerCase().includes("max")
+      )
+    : baseOnlyModels.includes(model)
+    ? products.filter((p) => {
+        const name = (p.name || "").toLowerCase();
+        return (
+          !name.includes("برو") &&
+          !name.includes("pro") &&
+          !name.includes("بلس") &&
+          !name.includes("plus") &&
+          !name.includes("اير") &&
+          !name.includes("إير") &&
+          !name.includes("air")
+        );
+      })
+    : products;
 
   const storageOrder = ["64GB", "128GB", "256GB", "512GB", "1TB", "2TB"];
   const getStorage = (p: Product) => {

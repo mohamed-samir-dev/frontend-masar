@@ -75,6 +75,100 @@ const PRODUCTS: Product[] = [
     ],
     storage: ["256GB", "512GB", "1TB"],
   },
+  {
+    id: "16-pro-max",
+    name: "آيفون 16 برو ماكس",
+    subtitle: "iPhone 16 Pro Max",
+    colors: [
+      { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "/iphone-16-pro-max/i-1.webp" },
+      { name: "تيتانيوم طبيعي ", value: "#9A9A9A", image: "/iphone-16-pro-max/i-2.webp" },
+      {  name: "تيتانيوم ابيض ",value: "#E5E5E0", image: "/iphone-16-pro-max/i-3.webp" },
+    ],
+    storage: ["256GB", "512GB", "1TB"],
+  },
+  {
+    id: "16-pro",
+    name: "آيفون 16 برو",
+    subtitle: "iPhone 16 Pro",
+    colors: [
+     { name: "تيتانيوم صحراوي", value: "#C8A77A", image: "/iphone-16-pro-max/i-1.webp" },
+      { name: "تيتانيوم طبيعي ", value: "#9A9A9A", image: "/iphone-16-pro-max/i-2.webp" },
+      {  name: "تيتانيوم ابيض ",value: "#E5E5E0", image: "/iphone-16-pro-max/i-3.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "16-plus",
+    name: "آيفون 16 بلس",
+    subtitle: "iPhone 16 Plus",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "16",
+    name: "آيفون 16",
+    subtitle: "iPhone 16",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "15-pro-max",
+    name: "آيفون 15 برو ماكس",
+    subtitle: "iPhone 15 Pro Max",
+    colors: [
+      { name: "تيتانيوم أسود", value: "#4A4A4A", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["256GB", "512GB", "1TB"],
+  },
+  {
+    id: "15-pro",
+    name: "آيفون 15 برو",
+    subtitle: "iPhone 15 Pro",
+    colors: [
+      { name: "تيتانيوم أسود", value: "#4A4A4A", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "15-plus",
+    name: "آيفون 15 بلس",
+    subtitle: "iPhone 15 Plus",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "15",
+    name: "آيفون 15",
+    subtitle: "iPhone 15",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "14-pro-max",
+    name: "آيفون 14 برو ماكس",
+    subtitle: "iPhone 14 Pro Max",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
+  {
+    id: "14-pro",
+    name: "آيفون 14 برو",
+    subtitle: "iPhone 14 Pro",
+    colors: [
+      { name: "أسود", value: "#1C1C1E", image: "/iphone-17-promax/iphone17promax-org.webp" },
+    ],
+    storage: ["128GB", "256GB", "512GB"],
+  },
 ];
 
 /* ─── ProductCard ───────────────────────────────────────────────────────── */
