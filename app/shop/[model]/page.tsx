@@ -92,9 +92,16 @@ export default async function ShopModelPage({
         )
       : products;
 
+  const storageOrder = ["64GB", "128GB", "256GB", "512GB", "1TB", "2TB"];
+  const sorted = [...filtered].sort((a, b) => {
+    const ai = storageOrder.indexOf(a.storage ?? "");
+    const bi = storageOrder.indexOf(b.storage ?? "");
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+
   return (
     <ShopModelClient
-      products={filtered}
+      products={sorted}
       modelName={config.label}
         hero={config.hero}
     />
