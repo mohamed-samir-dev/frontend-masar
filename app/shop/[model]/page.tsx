@@ -140,10 +140,21 @@ export default async function ShopModelPage({
   const filtered =
     model === "17-pro"
       ? products.filter(
-        (p) =>
-          !(p.name || "").toLowerCase().includes("ماكس") &&
-          !(p.name || "").toLowerCase().includes("max")
-      )
+          (p) =>
+            !(p.name || "").toLowerCase().includes("ماكس") &&
+            !(p.name || "").toLowerCase().includes("max")
+        )
+      : model === "17"
+      ? products.filter((p) => {
+          const name = (p.name || "").toLowerCase();
+          return (
+            !name.includes("برو") &&
+            !name.includes("pro") &&
+            !name.includes("اير") &&
+            !name.includes("إير") &&
+            !name.includes("air")
+          );
+        })
       : products;
 
   const storageOrder = ["64GB", "128GB", "256GB", "512GB", "1TB", "2TB"];
