@@ -68,7 +68,7 @@ const PRODUCTS: Product[] = [
     name: "آيفون 17",
     subtitle: "iPhone 17",
     colors: [
-      { name: "وردي",  value: "#C9ADDC", image: "/iphone-17/ii-pink.webp" },
+      { name: "وردي",  value: "#C9ADDC", image: "/iphone-17/i-pink.webp" },
       { name: "أخضر",  value: "#A6B286", image: "/iphone-17/i-green.webp" },
       { name: "أبيض",  value: "#FFFFFF", image: "/iphone-17/i-white.webp" },
       { name: "أسود",  value: "#000000", image: "/iphone-17/i-black.webp" },
