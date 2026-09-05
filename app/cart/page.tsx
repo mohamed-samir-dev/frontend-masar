@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { useCartStore } from "../store/cartStore";
+import { useCartStore, useCustomerStore } from "../store/cartStore";
 import type { CustomerInfo } from "../store/cartStore";
 import PaymentForm from "./components/PaymentForm";
 import CardPaymentForm from "./components/CardPaymentForm";
@@ -110,7 +110,8 @@ function MiniOrderSummary({
 
 export default function CartPage() {
   const router = useRouter();
-  const { items, removeItem, updateQty, totalPrice, totalItems, setCustomer, customer } = useCartStore();
+  const { items, removeItem, updateQty, totalPrice, totalItems } = useCartStore();
+  const { customer, setCustomer } = useCustomerStore();
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [customerDraft, setCustomerDraft] = useState<Partial<CustomerInfo>>(customer ?? {});

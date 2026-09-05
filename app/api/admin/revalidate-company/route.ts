@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag, revalidatePath } from "next/cache";
-import { forwardCookies, getBackend } from "../../_lib";
+import { forwardCookies, getBackend } from "../_lib";
 
 // Server-side revalidate — السر لا يظهر في Network أو JS bundle
 export async function POST(req: NextRequest) {
@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   if (!authCheck.ok) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
-  revalidateTag("company");
-  revalidatePath("/");
+  revalidateTag("company", "no-store");
+  revalidatePath("/", "layout");
   return NextResponse.json({ revalidated: true });
 }
