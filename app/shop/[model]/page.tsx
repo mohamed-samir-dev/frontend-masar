@@ -79,70 +79,56 @@ const MODEL_MAP: Record<
     label: "آيفون 16 برو ماكس",
     keywords: ["16 برو ماكس", "16 pro max", "16promax"],
     hero: [
-      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643540/251e0223-4981-4028-b0b6-6b966832abce.webp", title: "آيفون 16 برو ماكس", subtitle: "قوة استثنائية في تصميم احترافي.", highlight: "احترافي" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788649290/d7b5e81a-a3de-42fd-b73e-0df0c2b4cb11.jpg", title: "آيفون 16 برو ماكس", subtitle: "قوة استثنائية في تصميم احترافي.", highlight: "احترافي" },
     ],
   },
   "16-pro": {
     label: "آيفون 16 برو",
     keywords: ["16 برو", "16 pro"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16 برو", subtitle: "أداء احترافي في حجم مثالي.", highlight: "احترافي" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788649290/768732fa-f71e-47f6-a9cb-a8578dd4bff0.jpg", title: "آيفون 16 برو", subtitle: "أداء احترافي في حجم مثالي.", highlight: "احترافي" },
     ],
   },
   "16-plus": {
     label: "آيفون 16 بلس",
     keywords: ["16 بلس", "16 plus"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16 بلس", subtitle: "شاشة كبيرة وبطارية تدوم أطول.", highlight: "بطارية تدوم" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643539/7bba49c7-f75e-4a42-a2cf-bff4ce3f6f9e.webp", title: "آيفون 16 بلس", subtitle: "شاشة كبيرة وبطارية تدوم أطول.", highlight: "بطارية تدوم" },
     ],
   },
   "16": {
     label: "آيفون 16",
     keywords: ["ايفون 16", "آيفون 16", "iphone 16"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 16", subtitle: "تجربة iPhone الجديدة بالكامل.", highlight: "الجديدة" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643537/e5241fbd-5d6a-4011-a5d7-8dda50c6e722.webp", title: "آيفون 16", subtitle: "تجربة iPhone الجديدة بالكامل.", highlight: "الجديدة" },
     ],
   },
   "15-pro-max": {
     label: "آيفون 15 برو ماكس",
     keywords: ["15 برو ماكس", "15 pro max", "15promax"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 برو ماكس", subtitle: "تيتانيوم. قوة. احتراف.", highlight: "تيتانيوم" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788649290/d7b5e81a-a3de-42fd-b73e-0df0c2b4cb11.jpg", title: "آيفون 15 برو ماكس", subtitle: "تيتانيوم. قوة. احتراف.", highlight: "تيتانيوم" },
     ],
   },
   "15-pro": {
     label: "آيفون 15 برو",
     keywords: ["15 برو", "15 pro"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 برو", subtitle: "تيتانيوم خفيف وأداء لا يُضاهى.", highlight: "تيتانيوم" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788649290/d7b5e81a-a3de-42fd-b73e-0df0c2b4cb11.jpg", title: "آيفون 15 برو", subtitle: "تيتانيوم خفيف وأداء لا يُضاهى.", highlight: "تيتانيوم" },
     ],
   },
   "15-plus": {
     label: "آيفون 15 بلس",
     keywords: ["15 بلس", "15 plus"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15 بلس", subtitle: "شاشة ضخمة وبطارية استثنائية.", highlight: "بطارية استثنائية" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643538/d55b764c-e695-428a-99c9-a0768cd173e7.webp", title: "آيفون 15 بلس", subtitle: "شاشة ضخمة وبطارية استثنائية.", highlight: "بطارية استثنائية" },
     ],
   },
   "15": {
     label: "آيفون 15",
     keywords: ["ايفون 15", "آيفون 15", "iphone 15"],
     hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 15", subtitle: "Dynamic Island وكاميرا 48MP.", highlight: "Dynamic Island" },
-    ],
-  },
-  "14-pro-max": {
-    label: "آيفون 14 برو ماكس",
-    keywords: ["14 برو ماكس", "14 pro max", "14promax"],
-    hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 14 برو ماكس", subtitle: "Dynamic Island لأول مرة.", highlight: "Dynamic Island" },
-    ],
-  },
-  "14-pro": {
-    label: "آيفون 14 برو",
-    keywords: ["14 برو", "14 pro"],
-    hero: [
-      { image: "/iphone-17-promax/i-hero1.webp", title: "آيفون 14 برو", subtitle: "شاشة Always-On وكاميرا 48MP.", highlight: "Always-On" },
+      { image: "https://res.cloudinary.com/bzwltpqf/image/upload/v1788643538/d55b764c-e695-428a-99c9-a0768cd173e7.webp", title: "آيفون 15", subtitle: "Dynamic Island وكاميرا 48MP.", highlight: "Dynamic Island" },
     ],
   },
   "17": {
