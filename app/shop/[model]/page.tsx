@@ -80,7 +80,7 @@ const MODEL_MAP: Record<
     keywords: ["ايفون 17", "آيفون 17", "iphone 17"],
     hero: [
      { 
-  image: "/iphone-17/i-hero5.webp",
+  image: "/iphone-17/i-hero1.webp",
   title: "ملك جمال اللون.",
   subtitle: "ألوان تخطف الأنظار",
   highlight: "تخطف الأنظار"
@@ -98,7 +98,7 @@ const MODEL_MAP: Record<
   highlight: "أصلب"
 },
 { 
-  image: "/iphone-17/i-hero1.webp",
+  image: "/iphone-17/i-hero5.webp",
   title: "شاشة أكبر. تجربة أمتع.",
   subtitle: "سوبر ريتنا XDR مع ProMotion حتى 120Hz",
   highlight: "تجربة أمتع"
