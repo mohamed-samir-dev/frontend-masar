@@ -121,7 +121,7 @@ function DesignSection({ section }: { section: ProductSection }) {
           <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible scrollbar-hide">
             {features.map((f, i) => (
               <button
-                key={f.id}
+                key={`${f.id}-${i}`}
                 onClick={() => { setActive(i); setColorIdx(0); }}
                 className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[11px] sm:text-xs font-black whitespace-nowrap transition-all duration-200 cursor-pointer backdrop-blur-sm shrink-0 ${
                   active === i
