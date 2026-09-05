@@ -79,8 +79,36 @@ const MODEL_MAP: Record<
     label: "آيفون 17",
     keywords: ["ايفون 17", "آيفون 17", "iphone 17"],
     hero: [
-      { image: "/iphone-17/iphone-17-white.webp", title: "", subtitle: "الجيل الجديد هنا", highlight: "الجديد" },
-      { image: "/iphone-17/iphone-17-green.webp", title: "", subtitle: "اختر ما يعبّر عنك", highlight: "يعبّر عنك" },
+     { 
+  image: "/iphone-17/i-hero5.webp",
+  title: "ملك جمال اللون.",
+  subtitle: "ألوان تخطف الأنظار",
+  highlight: "تخطف الأنظار"
+},
+{ 
+  image: "/iphone-17/i-hero4.webp",
+  title: "الجديد، بالمختصر المفيد.",
+  subtitle: "ستايل جديد. يبهرك بالمزيد.",
+  highlight: "يبهرك بالمزيد"
+},
+{ 
+  image: "/iphone-17/i-hero2.webp",
+  title: "أصلب. وإلى القلب أقرب.",
+  subtitle: "تصميم ينفرد بخطوط انسيابية",
+  highlight: "أصلب"
+},
+{ 
+  image: "/iphone-17/i-hero1.webp",
+  title: "شاشة أكبر. تجربة أمتع.",
+  subtitle: "سوبر ريتنا XDR مع ProMotion حتى 120Hz",
+  highlight: "تجربة أمتع"
+},
+{ 
+  image: "/iphone-17/i-hero3.webp",
+  title: "من بعيد أو قريب، يبهرك.",
+  subtitle: "نظام كاميرا Fusion مزدوجة 48MP",
+  highlight: "يبهرك عندما تصوّر"
+},
     ],
   },
 };
