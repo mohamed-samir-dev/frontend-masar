@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ProductPageClient from "./ProductPageClient";
 import { getCachedProduct } from "../../lib/products-cache";
 
-export const revalidate = false;
+export const revalidate = 0;
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 const SITE_URL = "https://albilaad-ksa.com";
