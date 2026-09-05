@@ -8,6 +8,10 @@ export default function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
+  if (pathname.startsWith("/invoice") && !token) {
+    return NextResponse.redirect(new URL("/admin/login", req.url));
+  }
+
   if (pathname === "/admin/login" && token) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
