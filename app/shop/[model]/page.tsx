@@ -93,9 +93,13 @@ export default async function ShopModelPage({
       : products;
 
   const storageOrder = ["64GB", "128GB", "256GB", "512GB", "1TB", "2TB"];
+  const getStorage = (p: Product) => {
+    const match = (p.storage ?? p.name ?? "").match(/\d+\s*(GB|TB|جيجابايت|تيرابايت)/i);
+    return match ? match[0].replace(/\s/g, "").replace(/جيجابايت/i, "GB").replace(/تيرابايت/i, "TB").toUpperCase() : "";
+  };
   const sorted = [...filtered].sort((a, b) => {
-    const ai = storageOrder.indexOf(a.storage ?? "");
-    const bi = storageOrder.indexOf(b.storage ?? "");
+    const ai = storageOrder.indexOf(getStorage(a));
+    const bi = storageOrder.indexOf(getStorage(b));
     return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
   });
 
