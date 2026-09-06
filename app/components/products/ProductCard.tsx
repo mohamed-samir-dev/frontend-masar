@@ -36,7 +36,7 @@ function ProductCard({ product, priority = false }: { product: Product; priority
   const allStorageOptions = (hasVariants ? activeVariant?.storageOptions : undefined) ?? product.variants?.[0]?.storageOptions ?? [];
   const activeStorageOpt = allStorageOptions[activeStorageIdx];
 
-  const baseName = product.name.replace(/\d+GB|\d+TB/gi, "").replace(/\s{2,}/g, " ").trim();
+  const baseName = product.name.split("،")[0].trim();
   const selectedColorName = activeVariant?.color ?? product.color ?? "";
   const selectedStorageName = activeStorageOpt?.storage ?? product.storage ?? "";
   const displayName = `${baseName}${selectedStorageName ? " – " + selectedStorageName : ""}${selectedColorName ? " | " + selectedColorName : ""}`;

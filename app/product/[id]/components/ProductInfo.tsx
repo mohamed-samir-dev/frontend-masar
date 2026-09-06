@@ -28,7 +28,9 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
   const [loading, setLoading] = useState(false);
   const [popup, setPopup] = useState(false);
 
-  const { name, brand, salePrice, originalPrice = 0, taxIncluded, installment, freeDelivery, inStock } = product;
+  const { brand, salePrice, originalPrice = 0, taxIncluded, installment, freeDelivery, inStock } = product;
+  const baseName = product.name.split("،")[0].trim();
+  const displayName = `${baseName}${selectedStorage ? " – " + selectedStorage : ""}${selectedColor ? " | " + selectedColor : ""}`;
   const hasDiscount = salePrice != null && salePrice !== originalPrice;
   const savings = hasDiscount ? originalPrice - (salePrice ?? 0) : 0;
   const discountPct = hasDiscount ? Math.round((savings / originalPrice) * 100) : 0;
@@ -87,7 +89,7 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
           </div>
 
           {/* Name */}
-          <h1 className="text-sm font-black text-gray-900 leading-snug">{name}</h1>
+          <h1 className="text-sm font-black text-gray-900 leading-snug">{displayName}</h1>
 
           <div className="h-px bg-gray-100" />
 
