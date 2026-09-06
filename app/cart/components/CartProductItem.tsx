@@ -49,7 +49,7 @@ export default function CartProductItem({ product, qty, cartKey, onRemove, onUpd
 
         {/* الصف الأول: الاسم + زر الحذف */}
         <div className="flex items-start justify-between gap-1.5">
-          <p className="text-xs sm:text-sm font-semibold text-[#040D2A] leading-snug line-clamp-2">{product.name}</p>
+          <p className="text-xs sm:text-sm font-semibold text-[#040D2A] leading-snug line-clamp-2">{product.name.split("،")[0].trim()}{product.storage ? ` – ${product.storage}` : ""}{product.color ? ` | ${product.color}` : ""}</p>
           <button
             onClick={() => onRemove(cartKey)}
             className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded-lg sm:rounded-xl text-[#C8D0DC] hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all shrink-0"

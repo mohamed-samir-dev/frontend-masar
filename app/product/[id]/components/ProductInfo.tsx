@@ -40,7 +40,7 @@ export default function ProductInfo({ product, selectedColor, selectedStorage, o
   const handleAdd = () => {
     setLoading(true);
     setTimeout(() => {
-      addItem(product);
+      addItem({ ...product, name: displayName });
       setLoading(false);
       setAdded(true);
       setPopup(true);
