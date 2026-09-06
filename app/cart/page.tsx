@@ -88,7 +88,7 @@ function MiniOrderSummary({
                   }
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-[#040D2A] truncate">{product.name}</p>
+                  <p className="text-xs font-semibold text-[#040D2A] truncate">{product.name.split("،")[0].trim()}{product.storage ? ` – ${product.storage}` : ""}{product.color ? ` | ${product.color}` : ""}</p>
                   <p className="text-[11px] text-[#8A96A8]">الكمية: {qty}</p>
                 </div>
                 <span className="text-sm font-bold text-[#040D2A] shrink-0">{fmt(price * qty)} <span className="text-[10px] font-normal text-[#B0BCCE]">ريال</span></span>

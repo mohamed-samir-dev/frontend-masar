@@ -104,7 +104,7 @@ export default function ProductPageClient({
                 <span className="hidden sm:inline">الرئيسية</span>
               </Link>
               <span className="text-gray-300 shrink-0">/</span>
-              <span className="font-bold text-gray-700 truncate text-xs sm:text-sm">{product.name}</span>
+              <span className="font-bold text-gray-700 truncate text-xs sm:text-sm">{product.name.split("،")[0].trim()}</span>
             </nav>
           </div>
           <button
